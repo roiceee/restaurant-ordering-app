@@ -6,11 +6,11 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+
 public class RegistrationPanel {
     private JPanel mainPanel;
     private JPanel nameFieldPanel;
     private JPanel addressFieldPanel;
-    private JPanel businessNumberFieldPanel;
     private JPanel usernameFieldPanel;
     private JPanel passwordFieldPanel;
     private JPanel confirmPasswordFieldPanel;
@@ -20,22 +20,18 @@ public class RegistrationPanel {
     private JTextField regionField;
     private JPanel regionFieldPanel;
     private JPanel cityFieldPanel;
-    private JTextField textField1;
-    private JPanel barangayFieldPanel;
-    private JTextField textField2;
-    private JPanel streetFieldPanel;
-    private JTextField textField3;
-    private JTextField textField4;
+    private JTextField cityField;
+    private JTextField barangayField;
+    private JTextField streetField;
     private JPanel loginCredentialsPanel;
-    private JTextField textField5;
-    private JTextField textField6;
-    private JTextField textField7;
+    private JTextField usernameField;
+    private JTextField passwordField;
+    private JTextField confirmPasswordField;
     private JButton registerButton;
     private JPanel controlPanel;
     private JLabel loginLink;
     private JPanel leftPanel;
     private JPanel rightPanel;
-
     private JFrame parentFrame;
 
     public RegistrationPanel(JFrame parentFrame) {
@@ -54,6 +50,30 @@ public class RegistrationPanel {
             }
         });
     }
+
+    public void register() {
+        String restaurantName = nameField.getText().trim();
+        String restaurantAddress = countryField.getText().trim() + ", " + regionField.getText().trim() + ", "
+                + cityField.getText().trim() + ", " + barangayField.getText().trim() + ", "
+                + streetField.getText().trim();
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText().trim();
+
+        if (!validateConfirmPassword()) {
+            return;
+        }
+
+        //check if username exists on the database
+
+
+    }
+
+    public boolean validateConfirmPassword() {
+        String password = passwordField.getText().trim();
+        String confirmPassword = confirmPasswordField.getText().trim();
+        return password.equals(confirmPassword);
+    }
+
     public JPanel getMainPanel() {
         return mainPanel;
     }
