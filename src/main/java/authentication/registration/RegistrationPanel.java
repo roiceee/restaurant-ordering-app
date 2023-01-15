@@ -1,6 +1,7 @@
 package authentication.registration;
 
 import authentication.login.LoginFrame;
+import authentication.utility.DatabaseCredentials;
 import authentication.utility.PasswordSecurityService;
 
 import javax.swing.*;
@@ -79,7 +80,8 @@ public class RegistrationPanel {
 
         try {
 
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/restaurant_app", System.getenv("RESTAURANT_APP_USER"), System.getenv("RESTAURANT_APP_PASSWORD"));
+            conn = DriverManager.getConnection(DatabaseCredentials.URL.getValue(), DatabaseCredentials.USERNAME.getValue() ,
+                    DatabaseCredentials.PASSWORD.getValue());
             PreparedStatement selectStatement = conn.prepareStatement("SELECT * FROM restaurant_accounts WHERE username = ?;");
             selectStatement.setString(1, username);
 
@@ -92,7 +94,8 @@ public class RegistrationPanel {
             }
 
             PreparedStatement accountsInsertStatement =
-                    conn.prepareStatement("INSERT INTO restaurant_accounts (username, password, name, country, region, city) VALUES (?, ?, ?, ?, ?, ?);");
+                    conn.prepareStatement("INSERT INTO restaurant_accounts (username, password, name, country, region, city) " +
+                            "VALUES (?, ?, ?, ?, ?, ?);");
 
             accountsInsertStatement.setString(1, username);
             accountsInsertStatement.setString(2, passwordSecurityService.generatePassword(password));
