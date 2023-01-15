@@ -1,14 +1,13 @@
 package authentication.registration;
 
 import authentication.login.LoginFrame;
+import authentication.services.DatabaseAccessService;
 import authentication.utility.DatabaseCredentials;
-import authentication.utility.PasswordSecurityService;
+import authentication.services.PasswordSecurityService;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
 
 
@@ -37,12 +36,12 @@ public class RegistrationPanel {
     private JPanel rightPanel;
     private JFrame parentFrame;
 
-    private PasswordSecurityService passwordSecurityService;
+
 
     public RegistrationPanel(JFrame parentFrame) {
         addActionListeners();
         this.parentFrame = parentFrame;
-        passwordSecurityService = new PasswordSecurityService();
+
     }
 
     public void addActionListeners() {
@@ -75,46 +74,12 @@ public class RegistrationPanel {
             showJOptionPaneError("Validation Error", "PASSWORD and CONFIRM PASSWORD don't match.");
             return;
         }
+        if (!DatabaseAccessService.register(username, password, restaurantName, country, region, city)) {
+            return;
+        };
 
-        Connection conn;
-
-        try {
-
-            conn = DriverManager.getConnection(DatabaseCredentials.URL.getValue(), DatabaseCredentials.USERNAME.getValue() ,
-                    DatabaseCredentials.PASSWORD.getValue());
-            PreparedStatement selectStatement = conn.prepareStatement("SELECT * FROM restaurant_accounts WHERE username = ?;");
-            selectStatement.setString(1, username);
-
-            ResultSet rows = selectStatement.executeQuery();
-
-            //if username exists, show error message and prevent from registration.
-            if (rows.next()) {
-                showJOptionPaneError("Validation Error", "Username already exists.");
-                return;
-            }
-
-            PreparedStatement accountsInsertStatement =
-                    conn.prepareStatement("INSERT INTO restaurant_accounts (username, password, name, country, region, city) " +
-                            "VALUES (?, ?, ?, ?, ?, ?);");
-
-            accountsInsertStatement.setString(1, username);
-            accountsInsertStatement.setString(2, passwordSecurityService.generatePassword(password));
-            accountsInsertStatement.setString(3, restaurantName);
-            accountsInsertStatement.setString(4, country);
-            accountsInsertStatement.setString(5, region);
-            accountsInsertStatement.setString(6, city);
-
-            accountsInsertStatement.executeUpdate();
-
-
-            showJOptionPaneText("Success", "Restaurant registered successfully.");
-
-            parentFrame.dispose();
-            runLoginFrame();
-        } catch (SQLException e) {
-            showJOptionPaneError("Database Error", "We are having trouble working with the database.");
-            throw new RuntimeException(e);
-        }
+        parentFrame.dispose();
+        runLoginFrame();
 
     }
 

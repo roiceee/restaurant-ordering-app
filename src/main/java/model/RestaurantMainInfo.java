@@ -11,6 +11,9 @@ public class RestaurantMainInfo {
 
     String city;
 
+    public RestaurantMainInfo() {
+
+    }
 
     public RestaurantMainInfo(String restaurantID, String name, String country, String region, String city) {
         this.restaurantID = restaurantID;

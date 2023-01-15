@@ -1,7 +1,7 @@
-package authentication.utility;
+package authentication.services;
 
 public class PasswordSecurityService {
-    public String generatePassword(String password) {
+    public static String hashPassword(String password) {
        return String.valueOf(password.hashCode() * 1125 / 3);
     }
 }
