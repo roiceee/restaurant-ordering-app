@@ -1,10 +1,13 @@
 package authentication.registration;
 
 import authentication.login.LoginFrame;
+import authentication.utility.PasswordSecurityService;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
 
 
@@ -24,8 +27,8 @@ public class RegistrationPanel {
     private JTextField cityField;
     private JPanel loginCredentialsPanel;
     private JTextField usernameField;
-    private JTextField passwordField;
-    private JTextField confirmPasswordField;
+    private JPasswordField passwordField;
+    private JPasswordField confirmPasswordField;
     private JButton registerButton;
     private JPanel controlPanel;
     private JLabel loginLink;
@@ -33,19 +36,22 @@ public class RegistrationPanel {
     private JPanel rightPanel;
     private JFrame parentFrame;
 
+    private PasswordSecurityService passwordSecurityService;
+
     public RegistrationPanel(JFrame parentFrame) {
         addActionListeners();
         this.parentFrame = parentFrame;
+        passwordSecurityService = new PasswordSecurityService();
     }
 
     public void addActionListeners() {
         loginLink.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                //launch registration panel
-                LoginFrame frame = new LoginFrame();
-                frame.run();
+                //launch login frame
                 parentFrame.dispose();
+                runLoginFrame();
+
             }
         });
         registerButton.addActionListener(e -> register());
@@ -86,23 +92,22 @@ public class RegistrationPanel {
             }
 
             PreparedStatement accountsInsertStatement =
-                    conn.prepareStatement("INSERT INTO restaurant_accounts (username, password) VALUES (?, ?);");
+                    conn.prepareStatement("INSERT INTO restaurant_accounts (username, password, name, country, region, city) VALUES (?, ?, ?, ?, ?, ?);");
 
             accountsInsertStatement.setString(1, username);
-            accountsInsertStatement.setString(2, password);
-
-            PreparedStatement detailsInsertStatement =
-                    conn.prepareStatement("INSERT INTO restaurant_details (id, name, country, region, city) " +
-                            "VALUES (LAST_INSERT_ID(), ?, ?, ?, ?);");
-            detailsInsertStatement.setString(1, restaurantName);
-            detailsInsertStatement.setString(2, country);
-            detailsInsertStatement.setString(3, region);
-            detailsInsertStatement.setString(4, city);
+            accountsInsertStatement.setString(2, passwordSecurityService.generatePassword(password));
+            accountsInsertStatement.setString(3, restaurantName);
+            accountsInsertStatement.setString(4, country);
+            accountsInsertStatement.setString(5, region);
+            accountsInsertStatement.setString(6, city);
 
             accountsInsertStatement.executeUpdate();
-            detailsInsertStatement.executeUpdate();
+
 
             showJOptionPaneText("Success", "Restaurant registered successfully.");
+
+            parentFrame.dispose();
+            runLoginFrame();
         } catch (SQLException e) {
             showJOptionPaneError("Database Error", "We are having trouble working with the database.");
             throw new RuntimeException(e);
@@ -111,8 +116,8 @@ public class RegistrationPanel {
     }
 
     public boolean validateConfirmPassword() {
-        String password = passwordField.getText().trim();
-        String confirmPassword = confirmPasswordField.getText().trim();
+        String password = String.valueOf(passwordField.getPassword());
+        String confirmPassword = String.valueOf(confirmPasswordField.getPassword());
         return password.equals(confirmPassword);
     }
 
@@ -144,7 +149,7 @@ public class RegistrationPanel {
     }
 
     public String getPasswordField() {
-        return passwordField.getText().trim();
+        return String.valueOf(passwordField.getPassword());
     }
 
     public void showJOptionPaneError(String title, String message) {
@@ -155,6 +160,11 @@ public class RegistrationPanel {
     public void showJOptionPaneText(String title, String message) {
         JOptionPane.showMessageDialog(null, message,
                 title, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void runLoginFrame() {
+        LoginFrame loginFrame = new LoginFrame();
+        loginFrame.run();
     }
 
     public JPanel getMainPanel() {
