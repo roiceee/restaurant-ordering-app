@@ -96,6 +96,16 @@ public class RegistrationPanel {
                 !getPasswordField().isEmpty();
     }
 
+    public void showJOptionPaneError(String title, String message) {
+        JOptionPane.showMessageDialog(null, message,
+                title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void runLoginFrame() {
+        LoginFrame loginFrame = new LoginFrame();
+        loginFrame.run();
+    }
+
     public String getNameField() {
         return nameField.getText().trim();
     }
@@ -118,21 +128,6 @@ public class RegistrationPanel {
 
     public String getPasswordField() {
         return String.valueOf(passwordField.getPassword());
-    }
-
-    public void showJOptionPaneError(String title, String message) {
-        JOptionPane.showMessageDialog(null, message,
-                title, JOptionPane.ERROR_MESSAGE);
-    }
-
-    public void showJOptionPaneText(String title, String message) {
-        JOptionPane.showMessageDialog(null, message,
-                title, JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public void runLoginFrame() {
-        LoginFrame loginFrame = new LoginFrame();
-        loginFrame.run();
     }
 
     public JPanel getMainPanel() {

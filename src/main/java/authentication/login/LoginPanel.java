@@ -40,9 +40,8 @@ public class LoginPanel {
                                            @Override
                                            public void mouseClicked(MouseEvent e) {
                                                 //launch registration panel
-                                               RegistrationFrame frame = new RegistrationFrame();
-                                               frame.run();
                                                parentFrame.dispose();
+                                               runRegistrationFrame();
                                            }
                                        }
         );
@@ -72,6 +71,11 @@ public class LoginPanel {
 
     public String getPassword() {
         return String.valueOf(passwordField.getPassword());
+    }
+
+    public void runRegistrationFrame() {
+        RegistrationFrame frame = new RegistrationFrame();
+        frame.run();
     }
 
     public void launchErrorDialog(String title, String message) {
