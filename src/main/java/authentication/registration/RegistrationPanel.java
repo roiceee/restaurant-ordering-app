@@ -2,13 +2,11 @@ package authentication.registration;
 
 import authentication.login.LoginFrame;
 import authentication.services.DatabaseAccessService;
-import authentication.utility.DatabaseCredentials;
-import authentication.services.PasswordSecurityService;
+import util.JOptionPaneLogger;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.*;
 
 
 public class RegistrationPanel {
@@ -66,12 +64,12 @@ public class RegistrationPanel {
         String password = getPasswordField();
 
         if (!checkAllFieldsAreFilled()) {
-            showJOptionPaneError("Validation Error", "Please fill out all fields.");
+            JOptionPaneLogger.showErrorDialog("Validation Error", "Please fill out all fields.");
             return;
         }
 
         if (!validateConfirmPassword()) {
-            showJOptionPaneError("Validation Error", "PASSWORD and CONFIRM PASSWORD don't match.");
+            JOptionPaneLogger.showErrorDialog("Validation Error", "PASSWORD and CONFIRM PASSWORD don't match.");
             return;
         }
         if (!DatabaseAccessService.register(username, password, restaurantName, country, region, city)) {
@@ -96,10 +94,6 @@ public class RegistrationPanel {
                 !getPasswordField().isEmpty();
     }
 
-    public void showJOptionPaneError(String title, String message) {
-        JOptionPane.showMessageDialog(null, message,
-                title, JOptionPane.ERROR_MESSAGE);
-    }
 
     public void runLoginFrame() {
         LoginFrame loginFrame = new LoginFrame();

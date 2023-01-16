@@ -63,6 +63,9 @@ public class LoginPanel {
             return;
         }
 
+        runChooserUserTypeFrame(restaurantMainInfo);
+        parentFrame.dispose();
+
     }
 
     public String getUsername() {
@@ -75,6 +78,11 @@ public class LoginPanel {
 
     public void runRegistrationFrame() {
         RegistrationFrame frame = new RegistrationFrame();
+        frame.run();
+    }
+
+    public void runChooserUserTypeFrame(RestaurantMainInfo info) {
+        ChooseUserTypeFrame frame = new ChooseUserTypeFrame(info);
         frame.run();
     }
 
