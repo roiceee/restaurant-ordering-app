@@ -1,4 +1,4 @@
-package authentication.login;
+package forms.authentication.login;
 
 import model.RestaurantMainInfo;
 

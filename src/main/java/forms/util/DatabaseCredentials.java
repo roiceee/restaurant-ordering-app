@@ -1,4 +1,4 @@
-package authentication.util;
+package forms.util;
 
 public enum DatabaseCredentials {
     URL("jdbc:mysql://localhost/restaurant_app"),

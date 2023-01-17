@@ -1,16 +1,16 @@
-package authentication.registration;
+package forms.authentication.login;
 
 import javax.swing.*;
 
-public class RegistrationFrame {
+public class LoginFrame {
     JFrame frame;
 
-    public RegistrationFrame() {
-        frame = new JFrame("Registration");
+    public LoginFrame() {
+        frame = new JFrame("Login");
     }
 
     public void run() {
-        frame.setContentPane(new RegistrationPanel(frame).getMainPanel());
+        frame.setContentPane(new LoginPanel(frame).getRestaurantLoginMainPanel());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);

@@ -1,7 +1,7 @@
 package model;
 
 public class RestaurantMainInfo {
-    String restaurantID;
+    int restaurantID;
 
     String name;
 
@@ -15,7 +15,7 @@ public class RestaurantMainInfo {
 
     }
 
-    public RestaurantMainInfo(String restaurantID, String name, String country, String region, String city) {
+    public RestaurantMainInfo(int restaurantID, String name, String country, String region, String city) {
         this.restaurantID = restaurantID;
         this.name = name;
         this.country = country;
@@ -24,11 +24,11 @@ public class RestaurantMainInfo {
 
     }
 
-    public String getRestaurantID() {
+    public int getRestaurantID() {
         return restaurantID;
     }
 
-    public void setRestaurantID(String restaurantID) {
+    public void setRestaurantID(int restaurantID) {
         this.restaurantID = restaurantID;
     }
 

@@ -1,22 +1,21 @@
-package authentication.services;
+package forms.repository;
 
-import authentication.util.DatabaseCredentials;
+import forms.util.PasswordHasher;
+import forms.util.DatabaseCredentials;
 import model.RestaurantMainInfo;
 import util.JOptionPaneLogger;
 
 import java.sql.*;
 
-public class DatabaseAccessService {
+public class RegistrationRepository {
 
-    public DatabaseAccessService() {
+    public RegistrationRepository() {
     }
 
-    public static boolean register(String username, String password, String restaurantName, String country,
+    public boolean register(String username, String password, String restaurantName, String country,
                                    String region, String city) {
-        Connection conn;
-
         try {
-            conn = DriverManager.getConnection(DatabaseCredentials.URL.getValue(),
+            Connection conn = DriverManager.getConnection(DatabaseCredentials.URL.getValue(),
                     DatabaseCredentials.USERNAME.getValue(), DatabaseCredentials.PASSWORD.getValue());
 
 
@@ -24,7 +23,7 @@ public class DatabaseAccessService {
                     "(username, password, name, country, region, city) " + "VALUES (?, ?, ?, ?, ?, ?);");
 
             accountsInsertStatement.setString(1, username);
-            accountsInsertStatement.setString(2, PasswordSecurityService.hashPassword(password));
+            accountsInsertStatement.setString(2, PasswordHasher.hashPassword(password));
             accountsInsertStatement.setString(3, restaurantName);
             accountsInsertStatement.setString(4, country);
             accountsInsertStatement.setString(5, region);
@@ -44,12 +43,13 @@ public class DatabaseAccessService {
         return true;
     }
 
-    public static RestaurantMainInfo login(String username, String password) {
-        Connection conn;
+    public RestaurantMainInfo login(String username, String password) {
+
         RestaurantMainInfo restaurantMainInfo = new RestaurantMainInfo();
         try {
-            conn = DriverManager.getConnection(DatabaseCredentials.URL.getValue(),
+            Connection conn = DriverManager.getConnection(DatabaseCredentials.URL.getValue(),
                     DatabaseCredentials.USERNAME.getValue(), DatabaseCredentials.PASSWORD.getValue());
+
             PreparedStatement statement = conn.prepareStatement("SELECT * FROM restaurant_accounts " + "WHERE " +
                     "username = ?;");
             statement.setString(1, username);
@@ -66,7 +66,7 @@ public class DatabaseAccessService {
                 return null;
             }
 
-            restaurantMainInfo.setRestaurantID(resultSet.getString("id"));
+            restaurantMainInfo.setRestaurantID(resultSet.getInt("restaurant_id"));
             restaurantMainInfo.setName(resultSet.getString("name"));
             restaurantMainInfo.setCountry(resultSet.getString("country"));
             restaurantMainInfo.setRegion(resultSet.getString("region"));
@@ -80,6 +80,6 @@ public class DatabaseAccessService {
     }
 
     public static boolean isValidPassword(String password, String hashedPassword) {
-        return PasswordSecurityService.hashPassword(password).equals(hashedPassword);
+        return PasswordHasher.hashPassword(password).equals(hashedPassword);
     }
 }

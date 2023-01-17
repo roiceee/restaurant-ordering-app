@@ -1,7 +1,7 @@
-package authentication.registration;
+package forms.authentication.registration;
 
-import authentication.login.LoginFrame;
-import authentication.services.DatabaseAccessService;
+import forms.authentication.login.LoginFrame;
+import forms.repository.RegistrationRepository;
 import util.JOptionPaneLogger;
 
 import javax.swing.*;
@@ -34,7 +34,7 @@ public class RegistrationPanel {
     private JPanel rightPanel;
     private JFrame parentFrame;
 
-
+    private RegistrationRepository repository;
 
     public RegistrationPanel(JFrame parentFrame) {
         addActionListeners();
@@ -72,7 +72,7 @@ public class RegistrationPanel {
             JOptionPaneLogger.showErrorDialog("Validation Error", "PASSWORD and CONFIRM PASSWORD don't match.");
             return;
         }
-        if (!DatabaseAccessService.register(username, password, restaurantName, country, region, city)) {
+        if (!repository.register(username, password, restaurantName, country, region, city)) {
             return;
         };
 

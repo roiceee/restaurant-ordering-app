@@ -1,8 +1,9 @@
-package authentication.login;
+package forms.authentication.login;
 
-import authentication.registration.RegistrationFrame;
-import authentication.services.DatabaseAccessService;
+import forms.authentication.registration.RegistrationFrame;
+import forms.repository.RegistrationRepository;
 import model.RestaurantMainInfo;
+import util.JOptionPaneLogger;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -21,6 +22,8 @@ public class LoginPanel {
     private JLabel registerLabel;
     private JButton loginButton;
 
+    private RegistrationRepository repository;
+
     private JFrame parentFrame;
     public JPanel getRestaurantLoginMainPanel() {
         return restaurantLoginMainPanel;
@@ -29,6 +32,7 @@ public class LoginPanel {
     public LoginPanel(JFrame parentFrame) {
         addActionListeners();
         this.parentFrame = parentFrame;
+        repository = new RegistrationRepository();
     }
 
 
@@ -53,11 +57,11 @@ public class LoginPanel {
         String password = getPassword();
 
         if (username.isEmpty() || password.isEmpty()) {
-            launchErrorDialog("Validation Error", "Please fill out all the fields.");
+            JOptionPaneLogger.showErrorDialog("Validation Error", "Please fill out all the fields.");
             return;
         }
 
-       RestaurantMainInfo restaurantMainInfo = DatabaseAccessService.login(username, password);
+       RestaurantMainInfo restaurantMainInfo = repository.login(username, password);
 
         if (restaurantMainInfo == null) {
             return;
@@ -84,14 +88,6 @@ public class LoginPanel {
     public void runChooserUserTypeFrame(RestaurantMainInfo info) {
         ChooseUserTypeFrame frame = new ChooseUserTypeFrame(info);
         frame.run();
-    }
-
-    public void launchErrorDialog(String title, String message) {
-        JOptionPane.showMessageDialog(null, title, message, JOptionPane.ERROR_MESSAGE);
-    }
-
-    public void launchTextDialog(String title, String message) {
-        JOptionPane.showMessageDialog(null, title, message, JOptionPane.INFORMATION_MESSAGE);
     }
 
 }
