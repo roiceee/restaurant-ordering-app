@@ -33,8 +33,8 @@ public class AdminRepository {
             Connection con = DriverManager.getConnection(DatabaseCredentials.URL.getValue(),
                     DatabaseCredentials.USERNAME.getValue(), DatabaseCredentials.PASSWORD.getValue());
 
-            PreparedStatement statement = con.prepareStatement("SELECT name, description, price, pax FROM " +
-                            "items WHERE restaurant_id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
+            PreparedStatement statement = con.prepareStatement("SELECT item_id, name, description, price, pax " +
+                            "FROM items WHERE restaurant_id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE);
 
             statement.setInt(1, restaurantID);

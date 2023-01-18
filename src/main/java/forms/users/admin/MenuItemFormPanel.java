@@ -21,11 +21,14 @@ public class MenuItemFormPanel {
 
     AdminRepository repository;
 
-    public MenuItemFormPanel(JFrame frame, int restaurantID) {
+    AdminPanel adminPanel;
+
+    public MenuItemFormPanel(JFrame frame, int restaurantID, AdminPanel adminPanel) {
         this.frame = frame;
-        addActionListeners();
+        this.adminPanel = adminPanel;
         repository = new AdminRepository();
         this.restaurantID = restaurantID;
+        addActionListeners();
     }
 
     private void addActionListeners() {
@@ -51,6 +54,7 @@ public class MenuItemFormPanel {
             return;
         }
         frame.dispose();
+        adminPanel.setMenuTable();
     }
 
     private boolean checkIfAllFieldsAreFilled(String name, String description, int price, int pax) {

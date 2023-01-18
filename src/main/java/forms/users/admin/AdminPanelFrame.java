@@ -17,7 +17,9 @@ public class AdminPanelFrame {
     public void run() {
         frame.setContentPane(new AdminPanel(frame, info).getMainPanel());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//        frame.pack();
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

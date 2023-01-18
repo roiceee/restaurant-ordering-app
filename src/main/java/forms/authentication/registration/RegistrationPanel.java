@@ -56,6 +56,7 @@ public class RegistrationPanel {
     }
 
     public void register() {
+
         String restaurantName = getNameField();
         String country = getCountryField();
         String region = getRegionField();
@@ -63,8 +64,8 @@ public class RegistrationPanel {
         String username = getUsernameField();
         String password = getPasswordField();
 
-        if (!checkAllFieldsAreFilled()) {
-            JOptionPaneLogger.showErrorDialog("Validation Error", "Please fill out all fields.");
+        if (isInputInvalid(restaurantName) || isInputInvalid(country) || isInputInvalid(region) || isInputInvalid(city) ||
+                isInputInvalid(username) || isInputInvalid(password)) {
             return;
         }
 
@@ -72,55 +73,76 @@ public class RegistrationPanel {
             JOptionPaneLogger.showErrorDialog("Validation Error", "PASSWORD and CONFIRM PASSWORD don't match.");
             return;
         }
+
+
         if (!repository.register(username, password, restaurantName, country, region, city)) {
             return;
-        };
+        }
+
 
         parentFrame.dispose();
         runLoginFrame();
 
     }
 
-    public boolean validateConfirmPassword() {
+
+    private boolean validateConfirmPassword() {
         String password = String.valueOf(passwordField.getPassword());
         String confirmPassword = String.valueOf(confirmPasswordField.getPassword());
         return password.equals(confirmPassword);
     }
 
-    public boolean checkAllFieldsAreFilled() {
-        return !getNameField().isEmpty() && !getCountryField().isEmpty() &&
-                !getRegionField().isEmpty() && !getCityField().isEmpty() &&
-                !getUsernameField().isEmpty() &&
-                !getPasswordField().isEmpty();
-    }
 
-
-    public void runLoginFrame() {
+    private void runLoginFrame() {
         LoginFrame loginFrame = new LoginFrame();
         loginFrame.run();
     }
 
-    public String getNameField() {
+    private boolean isInputInvalid(String str) {
+
+        return isInputLengthInvalid(str) || isInputEmpty(str);
+    }
+
+    private boolean isInputLengthInvalid(String str) {
+        int maxInputLength = 50;
+        if (str.length() > maxInputLength) {
+            JOptionPaneLogger.showErrorDialog("Input Error", "Input length must not exceed " + maxInputLength +
+                    " characters.");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isInputEmpty(String str) {
+        if (!str.isEmpty()) {
+            return false;
+        }
+        JOptionPaneLogger.showErrorDialog("Input Error", "All fields should be filled.");
+        return true;
+    }
+
+
+    private String getNameField() {
         return nameField.getText().trim();
     }
 
-    public String getCountryField() {
+    private String getCountryField() {
         return countryField.getText().trim();
     }
 
-    public String getRegionField() {
+    private String getRegionField() {
         return regionField.getText().trim();
     }
 
-    public String getCityField() {
+    private String getCityField() {
         return cityField.getText().trim();
     }
 
-    public String getUsernameField() {
+    private String getUsernameField() {
         return usernameField.getText().trim();
     }
 
-    public String getPasswordField() {
+    private String getPasswordField() {
         return String.valueOf(passwordField.getPassword());
     }
 

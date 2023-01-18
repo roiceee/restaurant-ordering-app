@@ -7,9 +7,12 @@ import util.JOptionPaneLogger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 public class AdminPanel {
     private final JFrame parentFrame;
@@ -30,7 +33,6 @@ public class AdminPanel {
     private JTextArea orderCountTextArea;
     private JTextArea grossRevenueTextArea;
     private JPanel menuControlPanel;
-    private JPanel menuPreviewPanel;
     private JTextArea nameTextArea;
     private JTextArea descriptionTextArea;
     private JTextArea urlTextArea;
@@ -45,6 +47,8 @@ public class AdminPanel {
     private JButton deleteItemButton;
     private JButton clearMenuButton;
     private JButton refreshButton;
+    private JTextArea previewTextArea;
+
 
     public AdminPanel(JFrame parentFrame, RestaurantMainInfo info) {
         this.parentFrame = parentFrame;
@@ -65,14 +69,51 @@ public class AdminPanel {
     private void addActionListeners() {
         addItemButton.addActionListener(e ->addMenuItem());
         refreshButton.addActionListener(e -> setMenuTable());
+        menuTable.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                DefaultTableModel model = (DefaultTableModel) menuTable.getModel();
+                int selectedRow = menuTable.getSelectedRow();
+
+                String name = (String) model.getValueAt(selectedRow, 1);
+                String description = (String) model.getValueAt(selectedRow, 2);
+                int price = (int) model.getValueAt(selectedRow, 3);
+                int pax = (int) model.getValueAt(selectedRow, 4);
+                setPreviewTextArea(name, description, price, pax);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+
+
+        }); {
+
+        }
     }
 
     private void addMenuItem() {
-        MenuItemFrame frame = new MenuItemFrame(MenuItemActions.ADD, restaurantMainInfo.getRestaurantID());
+        MenuItemFrame frame = new MenuItemFrame(MenuItemActions.ADD, restaurantMainInfo.getRestaurantID(), this);
         frame.run();
     }
 
-    private void setMenuTable() {
+    public void setMenuTable() {
         try {
             ResultSet set = adminRepository.returnMenuItemsResultSet(restaurantMainInfo.getRestaurantID());
 
@@ -102,6 +143,8 @@ public class AdminPanel {
             for (int column = 0; column < numberOfColumns; column++) {
                 data[row][column] = rs.getObject(column + 1);
             }
+            Integer id = rs.getInt("item_id");
+            String name = rs.getString("name");
             row++;
         }
         return data;
@@ -119,8 +162,12 @@ public class AdminPanel {
     }
 
 
+    private void setPreviewTextArea(String name, String description, int price, int pax) {
+            previewTextArea.setText("\nName: " + name + "\n\nDescription: " + description + "\n\nPrice: " + price +
+                    "\n\nPax: " + pax);
+    }
     private String formatInfoString(String str) {
-        return CustomStringFormatter.capitalize(CustomStringFormatter.truncate(str, 22));
+        return CustomStringFormatter.capitalize(CustomStringFormatter.truncate(str, 53));
     }
 
 
