@@ -4,7 +4,6 @@ import forms.repository.AdminRepository;
 import model.MenuItem;
 import model.RestaurantMainInfo;
 import util.CustomStringFormatter;
-import util.JOptionPaneLogger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -126,12 +125,12 @@ public class AdminPanel {
             return;
         }
         Object res = JOptionPane.showConfirmDialog(null,
-                "Do you want to delete menu item " + selectedItem.getName() + "?",
-                "Delete Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                "Do you want to delete menu item " + selectedItem.getName() + "?", "Delete Confirmation",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (res.equals(JOptionPane.NO_OPTION)) {
             return;
         }
-        if (!adminRepository.deleteMenuItem(selectedItem.getId())){
+        if (!adminRepository.deleteMenuItem(selectedItem.getId())) {
             return;
         }
         refreshMenuTable();
@@ -142,12 +141,11 @@ public class AdminPanel {
         if (password.isBlank()) {
             return;
         }
-        if (!adminRepository.clearMenu(password, restaurantMainInfo.getRestaurantID())){
+        if (!adminRepository.clearMenu(password, restaurantMainInfo.getRestaurantID())) {
             return;
         }
         refreshMenuTable();
     }
-
 
     private Object[][] convertResultSetToRows(ResultSet rs) throws SQLException {
         ResultSetMetaData metaData = rs.getMetaData();
@@ -204,11 +202,14 @@ public class AdminPanel {
             previewTextArea.setText("");
             return;
         }
-        previewTextArea.setText("\nName: " + selectedItem.getName() + "\n\nDescription: " + selectedItem.getDescription() + "\n\nPrice" + ": " + selectedItem.getDescription() + "\n\nPax: " + selectedItem.getPax());
+        previewTextArea.setText("\nName: " + selectedItem.getName() +
+                "\n\nDescription: " + selectedItem.getDescription() +
+                "\n\nPrice" + ": " + selectedItem.getDescription() +
+                "\n\nPax: " + selectedItem.getPax());
     }
 
     private String formatInfoString(String str) {
-        return CustomStringFormatter.capitalize(CustomStringFormatter.truncate(str, 53));
+        return CustomStringFormatter.capitalize(CustomStringFormatter.truncate(str, 60));
     }
 
     private void toggleEditAndDeleteButtonEnabled() {

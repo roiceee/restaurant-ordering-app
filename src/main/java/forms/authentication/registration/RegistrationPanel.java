@@ -104,7 +104,7 @@ public class RegistrationPanel {
     }
 
     private boolean isInputLengthInvalid(String str) {
-        int maxInputLength = 50;
+        int maxInputLength = 60;
         if (str.length() > maxInputLength) {
             JOptionPaneLogger.showErrorDialog("Input Error", "Input length must not exceed " + maxInputLength +
                     " characters.");

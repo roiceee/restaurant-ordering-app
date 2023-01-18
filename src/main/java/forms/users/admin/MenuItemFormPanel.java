@@ -16,7 +16,7 @@ public class MenuItemFormPanel {
     private JButton cancelButton;
     private JButton confirmButton;
 
-    private JFrame frame;
+    private final JFrame frame;
 
     AdminRepository repository;
 
@@ -49,8 +49,8 @@ public class MenuItemFormPanel {
         int pax = getPaxSpinnerData();
 
         if (!checkIfAllFieldsAreFilled(name, description, price, pax)) {
-            JOptionPaneLogger.showErrorDialog("Validation Error", "Fill out all the fields appropriately. Price " +
-                    "and pax value should not be below zero.");
+            JOptionPaneLogger.showErrorDialog("Validation Error",
+                    "Fill out all the fields appropriately. Price " + "and pax value should not be below zero.");
             return;
         }
         boolean success = switch (action) {
@@ -63,6 +63,7 @@ public class MenuItemFormPanel {
         frame.dispose();
         adminPanel.refreshMenuTable();
     }
+
     private boolean addMenuItem(String name, String description, int price, int pax) {
         return repository.addMenuItem(menuItem.getRestaurantID(), name, description, price, pax);
     }
