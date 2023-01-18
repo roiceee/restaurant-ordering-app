@@ -1,6 +1,7 @@
 package forms.users.admin;
 
 import forms.repository.AdminRepository;
+import model.MenuItem;
 import model.RestaurantMainInfo;
 import util.CustomStringFormatter;
 import util.JOptionPaneLogger;
@@ -12,12 +13,12 @@ import java.awt.event.MouseListener;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
 
 public class AdminPanel {
     private final JFrame parentFrame;
     private final RestaurantMainInfo restaurantMainInfo;
     private final AdminRepository adminRepository;
+    MenuItem selectedItem;
     private JPanel mainPanel;
     private JLabel restaurantName;
     private JPanel upperPanel;
@@ -29,15 +30,9 @@ public class AdminPanel {
     private JPanel analyticsPanelRight;
     private JPanel analyticsPanelLeft;
     private JPanel labelPanel;
+
     private JPanel valuesPanel;
-    private JTextArea orderCountTextArea;
-    private JTextArea grossRevenueTextArea;
-    private JPanel menuControlPanel;
-    private JTextArea nameTextArea;
-    private JTextArea descriptionTextArea;
-    private JTextArea urlTextArea;
-    private JSpinner paxSpinner;
-    private JSpinner priceSpinner;
+
     private JButton addItemButton;
     private JLabel countryLabel;
     private JLabel regionLabel;
@@ -48,6 +43,8 @@ public class AdminPanel {
     private JButton clearMenuButton;
     private JButton refreshButton;
     private JTextArea previewTextArea;
+    private JTextArea ordersTextArea;
+    private JTextArea grossRevenueTextArea;
 
 
     public AdminPanel(JFrame parentFrame, RestaurantMainInfo info) {
@@ -67,19 +64,23 @@ public class AdminPanel {
     }
 
     private void addActionListeners() {
-        addItemButton.addActionListener(e ->addMenuItem());
+        addItemButton.addActionListener(e -> addMenuItem());
         refreshButton.addActionListener(e -> setMenuTable());
+        editItemButton.addActionListener(e -> editSelectedMenuItem());
         menuTable.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 DefaultTableModel model = (DefaultTableModel) menuTable.getModel();
                 int selectedRow = menuTable.getSelectedRow();
 
+                int id = (int) model.getValueAt(selectedRow, 0);
                 String name = (String) model.getValueAt(selectedRow, 1);
                 String description = (String) model.getValueAt(selectedRow, 2);
                 int price = (int) model.getValueAt(selectedRow, 3);
                 int pax = (int) model.getValueAt(selectedRow, 4);
-                setPreviewTextArea(name, description, price, pax);
+                MenuItem menuItem = new MenuItem(id, restaurantMainInfo.getRestaurantID(), name, description,
+                        price, pax);
+                setSelectedItem(menuItem);
             }
 
             @Override
@@ -101,15 +102,20 @@ public class AdminPanel {
             public void mouseExited(MouseEvent e) {
 
             }
-
-
-        }); {
-
-        }
+        });
     }
 
     private void addMenuItem() {
-        MenuItemFrame frame = new MenuItemFrame(MenuItemActions.ADD, restaurantMainInfo.getRestaurantID(), this);
+        MenuItem menuItem = new MenuItem(restaurantMainInfo.getRestaurantID());
+        MenuItemFrame frame = new MenuItemFrame(MenuItemActions.ADD, menuItem, this);
+        frame.run();
+    }
+
+    private void editSelectedMenuItem() {
+        if (selectedItem == null) {
+            return;
+        }
+        MenuItemFrame frame = new MenuItemFrame(MenuItemActions.EDIT, selectedItem, this);
         frame.run();
     }
 
@@ -117,11 +123,11 @@ public class AdminPanel {
         try {
             ResultSet set = adminRepository.returnMenuItemsResultSet(restaurantMainInfo.getRestaurantID());
 
-            menuTable.setModel(new DefaultTableModel(convertResultSetToRows(set), convertResultSetToColumns(set)
-            ));
+            menuTable.setModel(new DefaultTableModel(convertResultSetToRows(set), convertResultSetToColumns(set)));
             //prevent user from directly editing the table
             menuTable.setDefaultEditor(Object.class, null);
-
+            setSelectedItem(null);
+            toggleEditAndDeleteButtonEnabled();
         } catch (SQLException e) {
             JOptionPaneLogger.showErrorDialog("Database error", "Something wrong occurred.");
             throw new RuntimeException(e);
@@ -143,8 +149,7 @@ public class AdminPanel {
             for (int column = 0; column < numberOfColumns; column++) {
                 data[row][column] = rs.getObject(column + 1);
             }
-            Integer id = rs.getInt("item_id");
-            String name = rs.getString("name");
+
             row++;
         }
         return data;
@@ -161,11 +166,30 @@ public class AdminPanel {
         return objArray;
     }
 
-
-    private void setPreviewTextArea(String name, String description, int price, int pax) {
-            previewTextArea.setText("\nName: " + name + "\n\nDescription: " + description + "\n\nPrice: " + price +
-                    "\n\nPax: " + pax);
+    private void toggleEditAndDeleteButtonEnabled() {
+        if (selectedItem == null) {
+            editItemButton.setEnabled(false);
+            deleteItemButton.setEnabled(false);
+            return;
+        }
+        editItemButton.setEnabled(true);
+        deleteItemButton.setEnabled(true);
     }
+
+    private void setSelectedItem(MenuItem menuItem) {
+        selectedItem = menuItem;
+        setPreviewTextArea();
+        toggleEditAndDeleteButtonEnabled();
+    }
+
+    private void setPreviewTextArea() {
+        if (selectedItem == null) {
+            previewTextArea.setText("");
+            return;
+        }
+        previewTextArea.setText("\nName: " + selectedItem.getName() + "\n\nDescription: " + selectedItem.getDescription() + "\n\nPrice" + ": " + selectedItem.getDescription() + "\n\nPax: " + selectedItem.getPax());
+    }
+
     private String formatInfoString(String str) {
         return CustomStringFormatter.capitalize(CustomStringFormatter.truncate(str, 53));
     }

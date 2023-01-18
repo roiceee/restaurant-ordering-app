@@ -1,6 +1,7 @@
 package forms.users.admin;
 
 import forms.repository.AdminRepository;
+import model.MenuItem;
 import util.JOptionPaneLogger;
 
 import javax.swing.*;
@@ -17,27 +18,31 @@ public class MenuItemFormPanel {
 
     private JFrame frame;
 
-    private int restaurantID;
-
     AdminRepository repository;
 
     AdminPanel adminPanel;
 
-    public MenuItemFormPanel(JFrame frame, int restaurantID, AdminPanel adminPanel) {
+    MenuItem menuItem;
+
+    MenuItemActions action;
+
+    public MenuItemFormPanel(JFrame frame, MenuItem menuItem, AdminPanel adminPanel, MenuItemActions action) {
         this.frame = frame;
         this.adminPanel = adminPanel;
         repository = new AdminRepository();
-        this.restaurantID = restaurantID;
+        this.menuItem = menuItem;
+        this.action = action;
         addActionListeners();
+        setFieldValues();
     }
 
     private void addActionListeners() {
         cancelButton.addActionListener(e -> frame.dispose());
-        confirmButton.addActionListener(e -> addMenuItem());
+        confirmButton.addActionListener(e -> actionDispatcher());
     }
 
 
-    private void addMenuItem() {
+    private void actionDispatcher() {
         String name = getNameFieldData();
         String description = getDescriptionTextAreaData();
         int price = getPriceSpinnerData();
@@ -48,17 +53,34 @@ public class MenuItemFormPanel {
                     "and pax value should not be below zero.");
             return;
         }
-
-        if (!repository.addMenuItem(restaurantID, name, description, price, pax)) {
+        boolean success = switch (action) {
+            case ADD -> addMenuItem(name, description, price, pax);
+            case EDIT -> editMenuItem(name, description, price, pax);
+        };
+        if (!success) {
             JOptionPaneLogger.showErrorDialog("Database error", "Error occurred in the database.");
             return;
         }
         frame.dispose();
         adminPanel.setMenuTable();
     }
+    private boolean addMenuItem(String name, String description, int price, int pax) {
+        return repository.addMenuItem(menuItem.getRestaurantID(), name, description, price, pax);
+    }
+
+    private boolean editMenuItem(String name, String description, int price, int pax) {
+        return repository.editMenuItem(menuItem.getId(), name, description, price, pax);
+    }
 
     private boolean checkIfAllFieldsAreFilled(String name, String description, int price, int pax) {
         return !name.isEmpty() && !description.isEmpty() && price >= 0 && pax >= 0;
+    }
+
+    private void setFieldValues() {
+        nameField.setText(menuItem.getName());
+        descriptionTextArea.setText(menuItem.getDescription());
+        priceSpinner.setValue(menuItem.getPrice());
+        paxSpinner.setValue(menuItem.getPax());
     }
 
     public JPanel getMenuControlPanel() {
