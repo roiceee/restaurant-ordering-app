@@ -53,7 +53,7 @@ public class AdminPanel {
         adminRepository = new AdminRepository();
         setRestaurantValues();
         addActionListeners();
-        setMenuTable();
+        refreshMenuTable();
     }
 
     private void setRestaurantValues() {
@@ -65,8 +65,9 @@ public class AdminPanel {
 
     private void addActionListeners() {
         addItemButton.addActionListener(e -> addMenuItem());
-        refreshButton.addActionListener(e -> setMenuTable());
+        refreshButton.addActionListener(e -> refreshMenuTable());
         editItemButton.addActionListener(e -> editSelectedMenuItem());
+        deleteItemButton.addActionListener(e -> deleteSelectedMenuItem());
         menuTable.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -119,21 +120,22 @@ public class AdminPanel {
         frame.run();
     }
 
-    public void setMenuTable() {
-        try {
-            ResultSet set = adminRepository.returnMenuItemsResultSet(restaurantMainInfo.getRestaurantID());
-
-            menuTable.setModel(new DefaultTableModel(convertResultSetToRows(set), convertResultSetToColumns(set)));
-            //prevent user from directly editing the table
-            menuTable.setDefaultEditor(Object.class, null);
-            setSelectedItem(null);
-            toggleEditAndDeleteButtonEnabled();
-        } catch (SQLException e) {
-            JOptionPaneLogger.showErrorDialog("Database error", "Something wrong occurred.");
-            throw new RuntimeException(e);
+    private void deleteSelectedMenuItem() {
+        if (selectedItem == null) {
+            return;
         }
-
+        Object res = JOptionPane.showConfirmDialog(null,
+                "Do you want to delete menu item " + selectedItem.getName() + "?",
+                "Delete Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (res.equals(JOptionPane.NO_OPTION)) {
+            return;
+        }
+        if (!adminRepository.deleteMenuItem(selectedItem.getId())){
+            JOptionPaneLogger.showErrorDialog("Database error", "Can't delete item.");
+        }
+        refreshMenuTable();
     }
+
 
     private Object[][] convertResultSetToRows(ResultSet rs) throws SQLException {
         ResultSetMetaData metaData = rs.getMetaData();
@@ -166,14 +168,19 @@ public class AdminPanel {
         return objArray;
     }
 
-    private void toggleEditAndDeleteButtonEnabled() {
-        if (selectedItem == null) {
-            editItemButton.setEnabled(false);
-            deleteItemButton.setEnabled(false);
-            return;
+    public void refreshMenuTable() {
+        try {
+            ResultSet set = adminRepository.returnMenuItemsResultSet(restaurantMainInfo.getRestaurantID());
+
+            menuTable.setModel(new DefaultTableModel(convertResultSetToRows(set), convertResultSetToColumns(set)));
+            //prevent user from directly editing the table
+            menuTable.setDefaultEditor(Object.class, null);
+            setSelectedItem(null);
+        } catch (SQLException e) {
+            JOptionPaneLogger.showErrorDialog("Database error", "Something wrong occurred.");
+            throw new RuntimeException(e);
         }
-        editItemButton.setEnabled(true);
-        deleteItemButton.setEnabled(true);
+
     }
 
     private void setSelectedItem(MenuItem menuItem) {
@@ -194,6 +201,15 @@ public class AdminPanel {
         return CustomStringFormatter.capitalize(CustomStringFormatter.truncate(str, 53));
     }
 
+    private void toggleEditAndDeleteButtonEnabled() {
+        if (selectedItem == null) {
+            editItemButton.setEnabled(false);
+            deleteItemButton.setEnabled(false);
+            return;
+        }
+        editItemButton.setEnabled(true);
+        deleteItemButton.setEnabled(true);
+    }
 
     public JPanel getMainPanel() {
         return mainPanel;

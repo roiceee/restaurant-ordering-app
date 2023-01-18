@@ -10,8 +10,7 @@ public class AdminRepository {
     public boolean addMenuItem(int restaurantID, String name, String description, int price, int pax) {
         try {
 
-            Connection con = DriverManager.getConnection(DatabaseCredentials.URL.getValue(),
-                    DatabaseCredentials.USERNAME.getValue(), DatabaseCredentials.PASSWORD.getValue());
+            Connection con = getConnection();
 
             PreparedStatement statement = con.prepareStatement("INSERT INTO items (restaurant_id, name, " +
                     "description, price, pax) VALUES (?, ?, ?, ?, ?);");
@@ -30,8 +29,7 @@ public class AdminRepository {
 
     public boolean editMenuItem(int itemID, String name, String description, int price, int pax) {
         try {
-            Connection con = DriverManager.getConnection(DatabaseCredentials.URL.getValue(),
-                    DatabaseCredentials.USERNAME.getValue(), DatabaseCredentials.PASSWORD.getValue());
+            Connection con = getConnection();
             PreparedStatement statement = con.prepareStatement("UPDATE items SET name = ?, description = ?, price" +
                     " = ?, pax = ? WHERE item_id = ?;");
             statement.setString(1, name);
@@ -45,13 +43,24 @@ public class AdminRepository {
             e.printStackTrace();
             return false;
         }
+    }
 
+    public boolean deleteMenuItem(int itemID) {
+        try {
+            Connection con = getConnection();
+            PreparedStatement statement = con.prepareStatement("DELETE FROM items WHERE item_id = ?;");
+            statement.setInt(1, itemID);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public ResultSet returnMenuItemsResultSet(int restaurantID) {
         try {
-            Connection con = DriverManager.getConnection(DatabaseCredentials.URL.getValue(),
-                    DatabaseCredentials.USERNAME.getValue(), DatabaseCredentials.PASSWORD.getValue());
+            Connection con = getConnection();
 
             PreparedStatement statement = con.prepareStatement("SELECT item_id, name, description, price, pax " +
                             "FROM items WHERE restaurant_id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -64,6 +73,11 @@ public class AdminRepository {
             JOptionPaneLogger.showErrorDialog("Database Error", "Something wrong occurred.");
             throw new RuntimeException(e);
         }
+    }
+
+    private Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(DatabaseCredentials.URL.getValue(),
+                DatabaseCredentials.USERNAME.getValue(), DatabaseCredentials.PASSWORD.getValue());
     }
 
 }

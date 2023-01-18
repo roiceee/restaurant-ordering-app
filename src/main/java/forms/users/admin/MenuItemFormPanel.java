@@ -62,7 +62,7 @@ public class MenuItemFormPanel {
             return;
         }
         frame.dispose();
-        adminPanel.setMenuTable();
+        adminPanel.refreshMenuTable();
     }
     private boolean addMenuItem(String name, String description, int price, int pax) {
         return repository.addMenuItem(menuItem.getRestaurantID(), name, description, price, pax);
