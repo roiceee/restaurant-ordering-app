@@ -58,7 +58,6 @@ public class MenuItemFormPanel {
             case EDIT -> editMenuItem(name, description, price, pax);
         };
         if (!success) {
-            JOptionPaneLogger.showErrorDialog("Database error", "Error occurred in the database.");
             return;
         }
         frame.dispose();

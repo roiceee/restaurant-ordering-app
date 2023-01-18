@@ -68,6 +68,7 @@ public class AdminPanel {
         refreshButton.addActionListener(e -> refreshMenuTable());
         editItemButton.addActionListener(e -> editSelectedMenuItem());
         deleteItemButton.addActionListener(e -> deleteSelectedMenuItem());
+        clearMenuButton.addActionListener(e -> clearMenu());
         menuTable.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -131,7 +132,18 @@ public class AdminPanel {
             return;
         }
         if (!adminRepository.deleteMenuItem(selectedItem.getId())){
-            JOptionPaneLogger.showErrorDialog("Database error", "Can't delete item.");
+            return;
+        }
+        refreshMenuTable();
+    }
+
+    private void clearMenu() {
+        String password = JOptionPane.showInputDialog("Enter password");
+        if (password.isBlank()) {
+            return;
+        }
+        if (!adminRepository.clearMenu(password, restaurantMainInfo.getRestaurantID())){
+            return;
         }
         refreshMenuTable();
     }
@@ -151,7 +163,6 @@ public class AdminPanel {
             for (int column = 0; column < numberOfColumns; column++) {
                 data[row][column] = rs.getObject(column + 1);
             }
-
             row++;
         }
         return data;
@@ -177,7 +188,6 @@ public class AdminPanel {
             menuTable.setDefaultEditor(Object.class, null);
             setSelectedItem(null);
         } catch (SQLException e) {
-            JOptionPaneLogger.showErrorDialog("Database error", "Something wrong occurred.");
             throw new RuntimeException(e);
         }
 

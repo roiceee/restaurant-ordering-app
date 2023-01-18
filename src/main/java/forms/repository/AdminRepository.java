@@ -1,6 +1,7 @@
 package forms.repository;
 
 import forms.util.DatabaseCredentials;
+import forms.util.PasswordHasher;
 import util.JOptionPaneLogger;
 
 import java.sql.*;
@@ -41,6 +42,7 @@ public class AdminRepository {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            showDatabaseError();
             return false;
         }
     }
@@ -54,6 +56,39 @@ public class AdminRepository {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            showDatabaseError();
+            return false;
+        }
+    }
+
+    public boolean clearMenu(String password, int restaurantID) {
+        try {
+            Connection con = getConnection();
+
+            PreparedStatement statement = con.prepareStatement("SELECT password FROM restaurant_accounts WHERE " +
+                    "restaurant_id = ?;");
+            statement.setInt(1, restaurantID);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            String hashedPassword = "";
+            if (resultSet.next()) {
+                hashedPassword = resultSet.getString("password");
+            }
+
+            if (!PasswordHasher.hashPassword(password).equals(hashedPassword)) {
+                JOptionPaneLogger.showErrorDialog("Validation Error", "Wrong password.");
+                return false;
+            }
+
+            PreparedStatement deleteStatement = con.prepareStatement("DELETE FROM items WHERE restaurant_id = ?");
+            deleteStatement.setInt(1, restaurantID);
+            deleteStatement.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showDatabaseError();
             return false;
         }
     }
@@ -70,7 +105,7 @@ public class AdminRepository {
 
             return statement.executeQuery();
         } catch (SQLException e) {
-            JOptionPaneLogger.showErrorDialog("Database Error", "Something wrong occurred.");
+            showDatabaseError();
             throw new RuntimeException(e);
         }
     }
@@ -78,6 +113,10 @@ public class AdminRepository {
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DatabaseCredentials.URL.getValue(),
                 DatabaseCredentials.USERNAME.getValue(), DatabaseCredentials.PASSWORD.getValue());
+    }
+
+    private void showDatabaseError() {
+        JOptionPaneLogger.showErrorDialog("Database error", "Error connecting to database.");
     }
 
 }
