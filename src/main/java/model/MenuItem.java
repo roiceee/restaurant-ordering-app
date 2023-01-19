@@ -1,5 +1,7 @@
 package model;
 
+import util.CustomStringFormatter;
+
 public class MenuItem {
     private int id;
 
@@ -14,7 +16,7 @@ public class MenuItem {
     }
 
     public MenuItem(int restaurantID, String name, String description, int price, int pax) {
-       this(0, restaurantID, name, description, price, pax);
+        this(0, restaurantID, name, description, price, pax);
     }
 
     public MenuItem(int id, int restaurantID, String name, String description, int price, int pax) {
@@ -24,10 +26,6 @@ public class MenuItem {
         this.description = description;
         this.price = price;
         this.pax = pax;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getRestaurantID() {
@@ -40,6 +38,10 @@ public class MenuItem {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setId(String id) {
@@ -76,5 +78,18 @@ public class MenuItem {
 
     public void setPax(int pax) {
         this.pax = pax;
+    }
+
+    public String toPreviewString() {
+        return "Name: " + CustomStringFormatter.capitalize(name) + "\n\nDescription: " +
+                CustomStringFormatter.capitalize(description) +
+                "\n\nPrice: ₱" + price + "\n\nPax: " + pax + " people";
+    }
+
+    @Override
+    public String toString() {
+        return "[ID: " + id + ", RestaurantID: " + restaurantID +
+                ", Name: " + name + ", Description: " + description +
+                ", Price: " + price + ", Pax: " + pax + "]";
     }
 }

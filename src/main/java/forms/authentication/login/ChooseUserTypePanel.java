@@ -1,6 +1,7 @@
 package forms.authentication.login;
 
 import forms.users.admin.AdminPanelFrame;
+import forms.users.client.ClientPanelFrame;
 import model.RestaurantMainInfo;
 
 import javax.swing.*;
@@ -21,6 +22,7 @@ public class ChooseUserTypePanel {
 
     private RestaurantMainInfo info;
 
+
     public ChooseUserTypePanel(JFrame parentFrame, RestaurantMainInfo info) {
         this.parentFrame = parentFrame;
         this.info = info;
@@ -40,7 +42,8 @@ public class ChooseUserTypePanel {
         });
         btnClient.addActionListener(e -> {
             //launch client frame
-
+            runClientFrame();
+            parentFrame.dispose();
         });
     }
 
@@ -50,6 +53,11 @@ public class ChooseUserTypePanel {
 
     private void runAdminFrame() {
         AdminPanelFrame frame = new AdminPanelFrame(info);
+        frame.run();
+    }
+
+    private void runClientFrame() {
+        ClientPanelFrame frame = new ClientPanelFrame(info);
         frame.run();
     }
 

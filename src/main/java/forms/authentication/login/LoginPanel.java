@@ -53,8 +53,12 @@ public class LoginPanel {
     }
 
     public void login() {
-        String username = getUsername();
-        String password = getPassword();
+//        String username = getUsername();
+//        String password = getPassword();
+
+        //TODO: disable on production
+        String username = "hellnah";
+        String password = "mcdo4ever";
 
         if (username.isEmpty() || password.isEmpty()) {
             JOptionPaneLogger.showErrorDialog("Validation Error", "Please fill out all the fields.");

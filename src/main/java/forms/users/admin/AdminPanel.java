@@ -1,6 +1,6 @@
 package forms.users.admin;
 
-import forms.repository.AdminRepository;
+import forms.repository.MenuRepository;
 import model.MenuItem;
 import model.RestaurantMainInfo;
 import util.CustomStringFormatter;
@@ -16,7 +16,7 @@ import java.sql.SQLException;
 public class AdminPanel {
     private final JFrame parentFrame;
     private final RestaurantMainInfo restaurantMainInfo;
-    private final AdminRepository adminRepository;
+    private final MenuRepository adminRepository;
     MenuItem selectedItem;
     private JPanel mainPanel;
     private JLabel restaurantName;
@@ -49,14 +49,14 @@ public class AdminPanel {
     public AdminPanel(JFrame parentFrame, RestaurantMainInfo info) {
         this.parentFrame = parentFrame;
         this.restaurantMainInfo = info;
-        adminRepository = new AdminRepository();
+        adminRepository = new MenuRepository();
         setRestaurantValues();
         addActionListeners();
         refreshMenuTable();
     }
 
     private void setRestaurantValues() {
-        restaurantName.setText(CustomStringFormatter.truncate(restaurantMainInfo.getName(), 40));
+        restaurantName.setText(formatInfoString(restaurantMainInfo.getName()));
         countryLabel.setText(formatInfoString(restaurantMainInfo.getCountry()) + ",");
         regionLabel.setText(formatInfoString(restaurantMainInfo.getRegion()) + ",");
         cityLabel.setText(formatInfoString(restaurantMainInfo.getCity()) + ",");
@@ -147,47 +147,14 @@ public class AdminPanel {
         refreshMenuTable();
     }
 
-    private Object[][] convertResultSetToRows(ResultSet rs) throws SQLException {
-        ResultSetMetaData metaData = rs.getMetaData();
-        int numberOfColumns = metaData.getColumnCount();
-        int numberOfRows = 0;
-        while (rs.next()) {
-            numberOfRows++;
-        }
-        rs.beforeFirst();
-        Object[][] data = new Object[numberOfRows][numberOfColumns];
-        int row = 0;
-        while (rs.next()) {
-            for (int column = 0; column < numberOfColumns; column++) {
-                data[row][column] = rs.getObject(column + 1);
-            }
-            row++;
-        }
-        return data;
-    }
 
-    private String[] convertResultSetToColumns(ResultSet rs) throws SQLException {
-        ResultSetMetaData metaData = rs.getMetaData();
-        int numberOfColumns = metaData.getColumnCount();
-        String[] objArray = new String[numberOfColumns];
-
-        for (int i = 1; i <= numberOfColumns; i++) {
-            objArray[i - 1] = metaData.getColumnName(i);
-        }
-        return objArray;
-    }
 
     public void refreshMenuTable() {
-        try {
-            ResultSet set = adminRepository.returnMenuItemsResultSet(restaurantMainInfo.getRestaurantID());
-
-            menuTable.setModel(new DefaultTableModel(convertResultSetToRows(set), convertResultSetToColumns(set)));
+            menuTable.setModel(new DefaultTableModel(adminRepository.returnMenuRows(restaurantMainInfo.getRestaurantID()),
+                    adminRepository.returnMenuColumns(restaurantMainInfo.getRestaurantID())));
             //prevent user from directly editing the table
             menuTable.setDefaultEditor(Object.class, null);
             setSelectedItem(null);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
 
     }
 
@@ -202,10 +169,7 @@ public class AdminPanel {
             previewTextArea.setText("");
             return;
         }
-        previewTextArea.setText("\nName: " + selectedItem.getName() +
-                "\n\nDescription: " + selectedItem.getDescription() +
-                "\n\nPrice" + ": " + selectedItem.getDescription() +
-                "\n\nPax: " + selectedItem.getPax());
+        previewTextArea.setText(selectedItem.toPreviewString());
     }
 
     private String formatInfoString(String str) {

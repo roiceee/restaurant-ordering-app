@@ -1,6 +1,6 @@
 package forms.users.admin;
 
-import forms.repository.AdminRepository;
+import forms.repository.MenuRepository;
 import model.MenuItem;
 import util.JOptionPaneLogger;
 
@@ -18,7 +18,7 @@ public class MenuItemFormPanel {
 
     private final JFrame frame;
 
-    AdminRepository repository;
+    MenuRepository repository;
 
     AdminPanel adminPanel;
 
@@ -29,7 +29,7 @@ public class MenuItemFormPanel {
     public MenuItemFormPanel(JFrame frame, MenuItem menuItem, AdminPanel adminPanel, MenuItemActions action) {
         this.frame = frame;
         this.adminPanel = adminPanel;
-        repository = new AdminRepository();
+        repository = new MenuRepository();
         this.menuItem = menuItem;
         this.action = action;
         addActionListeners();

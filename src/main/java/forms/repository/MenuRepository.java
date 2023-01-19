@@ -6,7 +6,7 @@ import util.JOptionPaneLogger;
 
 import java.sql.*;
 
-public class AdminRepository {
+public class MenuRepository {
 
     public boolean addMenuItem(int restaurantID, String name, String description, int price, int pax) {
         try {
@@ -92,8 +92,9 @@ public class AdminRepository {
             return false;
         }
     }
+    
 
-    public ResultSet returnMenuItemsResultSet(int restaurantID) {
+    private ResultSet returnMenuItemsResultSet(int restaurantID) {
         try {
             Connection con = getConnection();
 
@@ -107,6 +108,51 @@ public class AdminRepository {
         } catch (SQLException e) {
             showDatabaseError();
             throw new RuntimeException(e);
+        }
+    }
+
+    public Object[][] returnMenuRows(int restaurantID) {
+        try {
+            ResultSet rs = returnMenuItemsResultSet(restaurantID);
+            ResultSetMetaData metaData = rs.getMetaData();
+            int numberOfColumns = metaData.getColumnCount();
+            int numberOfRows = 0;
+            while (rs.next()) {
+                numberOfRows++;
+            }
+            rs.beforeFirst();
+            Object[][] data = new Object[numberOfRows][numberOfColumns];
+            int row = 0;
+            while (rs.next()) {
+                for (int column = 0; column < numberOfColumns; column++) {
+                    data[row][column] = rs.getObject(column + 1);
+                }
+                row++;
+            }
+            return data;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showDatabaseError();
+            return new Object[0][0];
+        }
+
+    }
+
+    public String[] returnMenuColumns(int restaurantID) {
+        try {
+            ResultSet rs = returnMenuItemsResultSet(restaurantID);
+            ResultSetMetaData metaData = rs.getMetaData();
+            int numberOfColumns = metaData.getColumnCount();
+            String[] objArray = new String[numberOfColumns];
+
+            for (int i = 1; i <= numberOfColumns; i++) {
+                objArray[i - 1] = metaData.getColumnName(i);
+            }
+            return objArray;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showDatabaseError();
+            return new String[0];
         }
     }
 
