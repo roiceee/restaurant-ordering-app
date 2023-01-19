@@ -1,7 +1,9 @@
 package forms.repository;
 
+import com.mysql.cj.protocol.Resultset;
 import forms.util.DatabaseCredentials;
 import forms.util.PasswordHasher;
+import model.MenuDataObject;
 import util.JOptionPaneLogger;
 
 import java.sql.*;
@@ -94,7 +96,7 @@ public class MenuRepository {
     }
     
 
-    private ResultSet returnMenuItemsResultSet(int restaurantID) {
+    public MenuDataObject getMenuDataObject(int restaurantID) {
         try {
             Connection con = getConnection();
 
@@ -104,28 +106,30 @@ public class MenuRepository {
 
             statement.setInt(1, restaurantID);
 
-            return statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery();
+
+            return new MenuDataObject(getMenuRows(resultSet), getMenuColumns(resultSet));
         } catch (SQLException e) {
             showDatabaseError();
             throw new RuntimeException(e);
         }
     }
 
-    public Object[][] returnMenuRows(int restaurantID) {
+    private Object[][] getMenuRows(ResultSet resultSet) {
         try {
-            ResultSet rs = returnMenuItemsResultSet(restaurantID);
-            ResultSetMetaData metaData = rs.getMetaData();
+
+            ResultSetMetaData metaData = resultSet.getMetaData();
             int numberOfColumns = metaData.getColumnCount();
             int numberOfRows = 0;
-            while (rs.next()) {
+            while (resultSet.next()) {
                 numberOfRows++;
             }
-            rs.beforeFirst();
+            resultSet.beforeFirst();
             Object[][] data = new Object[numberOfRows][numberOfColumns];
             int row = 0;
-            while (rs.next()) {
+            while (resultSet.next()) {
                 for (int column = 0; column < numberOfColumns; column++) {
-                    data[row][column] = rs.getObject(column + 1);
+                    data[row][column] = resultSet.getObject(column + 1);
                 }
                 row++;
             }
@@ -138,10 +142,10 @@ public class MenuRepository {
 
     }
 
-    public String[] returnMenuColumns(int restaurantID) {
+    private String[] getMenuColumns(ResultSet resultSet) {
         try {
-            ResultSet rs = returnMenuItemsResultSet(restaurantID);
-            ResultSetMetaData metaData = rs.getMetaData();
+
+            ResultSetMetaData metaData = resultSet.getMetaData();
             int numberOfColumns = metaData.getColumnCount();
             String[] objArray = new String[numberOfColumns];
 

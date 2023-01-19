@@ -1,17 +1,15 @@
 package forms.users.admin;
 
 import forms.repository.MenuRepository;
+import model.MenuDataObject;
 import model.MenuItem;
 import model.RestaurantMainInfo;
 import util.CustomStringFormatter;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 
 public class AdminPanel {
     private final JFrame parentFrame;
@@ -68,7 +66,7 @@ public class AdminPanel {
         editItemButton.addActionListener(e -> editSelectedMenuItem());
         deleteItemButton.addActionListener(e -> deleteSelectedMenuItem());
         clearMenuButton.addActionListener(e -> clearMenu());
-        menuTable.addMouseListener(new MouseListener() {
+        menuTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 DefaultTableModel model = (DefaultTableModel) menuTable.getModel();
@@ -82,26 +80,6 @@ public class AdminPanel {
                 MenuItem menuItem = new MenuItem(id, restaurantMainInfo.getRestaurantID(), name, description,
                         price, pax);
                 setSelectedItem(menuItem);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
     }
@@ -148,13 +126,14 @@ public class AdminPanel {
     }
 
 
-
     public void refreshMenuTable() {
-            menuTable.setModel(new DefaultTableModel(adminRepository.returnMenuRows(restaurantMainInfo.getRestaurantID()),
-                    adminRepository.returnMenuColumns(restaurantMainInfo.getRestaurantID())));
-            //prevent user from directly editing the table
-            menuTable.setDefaultEditor(Object.class, null);
-            setSelectedItem(null);
+
+        MenuDataObject menuDataObject = adminRepository.getMenuDataObject(restaurantMainInfo.getRestaurantID());
+
+        menuTable.setModel(new DefaultTableModel(menuDataObject.getRows(), menuDataObject.getColumns()));
+        //prevent user from directly editing the table
+        menuTable.setDefaultEditor(Object.class, null);
+        setSelectedItem(null);
 
     }
 
