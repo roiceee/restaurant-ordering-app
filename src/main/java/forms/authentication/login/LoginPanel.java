@@ -1,7 +1,7 @@
 package forms.authentication.login;
 
 import forms.authentication.registration.RegistrationFrame;
-import forms.repository.RegistrationRepository;
+import repository.RegistrationRepository;
 import model.RestaurantMainInfo;
 import util.JOptionPaneLogger;
 

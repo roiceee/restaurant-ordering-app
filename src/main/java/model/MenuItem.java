@@ -6,7 +6,6 @@ import java.util.Objects;
 
 public class MenuItem {
     private int id;
-
     private int restaurantID;
     private String name;
     private String description;

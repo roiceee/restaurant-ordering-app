@@ -1,8 +1,6 @@
-package forms.repository;
+package repository;
 
-import com.mysql.cj.protocol.Resultset;
-import forms.util.DatabaseCredentials;
-import forms.util.PasswordHasher;
+import util.PasswordHasher;
 import model.MenuDataObject;
 import util.JOptionPaneLogger;
 
@@ -13,7 +11,7 @@ public class MenuRepository {
     public boolean addMenuItem(int restaurantID, String name, String description, int price, int pax) {
         try {
 
-            Connection con = getConnection();
+            Connection con =  RestaurantDatabaseConnectionProvider.getConnection();
 
             PreparedStatement statement = con.prepareStatement("INSERT INTO items (restaurant_id, name, " +
                     "description, price, pax) VALUES (?, ?, ?, ?, ?);");
@@ -32,7 +30,7 @@ public class MenuRepository {
 
     public boolean editMenuItem(int itemID, String name, String description, int price, int pax) {
         try {
-            Connection con = getConnection();
+            Connection con = RestaurantDatabaseConnectionProvider.getConnection();
             PreparedStatement statement = con.prepareStatement("UPDATE items SET name = ?, description = ?, price" +
                     " = ?, pax = ? WHERE item_id = ?;");
             statement.setString(1, name);
@@ -51,7 +49,7 @@ public class MenuRepository {
 
     public boolean deleteMenuItem(int itemID) {
         try {
-            Connection con = getConnection();
+            Connection con = RestaurantDatabaseConnectionProvider.getConnection();
             PreparedStatement statement = con.prepareStatement("DELETE FROM items WHERE item_id = ?;");
             statement.setInt(1, itemID);
             statement.executeUpdate();
@@ -65,7 +63,7 @@ public class MenuRepository {
 
     public boolean clearMenu(String password, int restaurantID) {
         try {
-            Connection con = getConnection();
+            Connection con = RestaurantDatabaseConnectionProvider.getConnection();
 
             PreparedStatement statement = con.prepareStatement("SELECT password FROM restaurant_accounts WHERE " +
                     "restaurant_id = ?;");
@@ -98,7 +96,7 @@ public class MenuRepository {
 
     public MenuDataObject getMenuDataObject(int restaurantID) {
         try {
-            Connection con = getConnection();
+            Connection con = RestaurantDatabaseConnectionProvider.getConnection();
 
             PreparedStatement statement = con.prepareStatement("SELECT item_id, name, description, price, pax " +
                             "FROM items WHERE restaurant_id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -160,10 +158,6 @@ public class MenuRepository {
         }
     }
 
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DatabaseCredentials.URL.getValue(),
-                DatabaseCredentials.USERNAME.getValue(), DatabaseCredentials.PASSWORD.getValue());
-    }
 
     private void showDatabaseError() {
         JOptionPaneLogger.showErrorDialog("Database error", "Error connecting to database.");

@@ -1,4 +1,4 @@
-package forms.util;
+package util;
 
 public class PasswordHasher {
     public static String hashPassword(String password) {

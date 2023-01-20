@@ -6,6 +6,8 @@ import java.util.List;
 
 public class Order {
     List<OrderItem> orderItemList;
+
+    String customerName;
     int restaurantID;
     Timestamp timestamp;
 
@@ -41,12 +43,19 @@ public class Order {
     public void deleteOrder(OrderItem orderItem) {
         orderItemList.remove(orderItem);
     }
+    
+    public void setRestaurantID(int restaurantID) {
+        this.restaurantID = restaurantID;
+    }
     public int getRestaurantID() {
         return restaurantID;
     }
 
-    public void setRestaurantID(int restaurantID) {
-        this.restaurantID = restaurantID;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+    public String getCustomerName() {
+        return customerName;
     }
 
     public Timestamp getTimestamp() {
@@ -56,6 +65,7 @@ public class Order {
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
+    
 
     @Override
     public String toString() {

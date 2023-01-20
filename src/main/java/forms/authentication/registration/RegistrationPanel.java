@@ -1,7 +1,7 @@
 package forms.authentication.registration;
 
 import forms.authentication.login.LoginFrame;
-import forms.repository.RegistrationRepository;
+import repository.RegistrationRepository;
 import util.JOptionPaneLogger;
 
 import javax.swing.*;

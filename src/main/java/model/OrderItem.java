@@ -24,6 +24,14 @@ public class OrderItem {
     }
 
     @Override
+    public String toString() {
+        return "OrderItem{" +
+                "menuItem=" + menuItem +
+                ", quantity=" + quantity +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -35,4 +43,5 @@ public class OrderItem {
     public int hashCode() {
         return Objects.hash(getMenuItem(), getQuantity());
     }
+
 }

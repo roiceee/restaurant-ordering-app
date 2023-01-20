@@ -1,6 +1,6 @@
 package forms.users.admin;
 
-import forms.repository.MenuRepository;
+import repository.MenuRepository;
 import model.MenuDataObject;
 import model.MenuItem;
 import model.RestaurantMainInfo;

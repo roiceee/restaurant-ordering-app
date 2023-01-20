@@ -1,6 +1,6 @@
 package forms.users.admin;
 
-import forms.repository.MenuRepository;
+import repository.MenuRepository;
 import model.MenuItem;
 import util.JOptionPaneLogger;
 

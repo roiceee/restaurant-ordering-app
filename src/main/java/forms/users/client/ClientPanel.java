@@ -1,10 +1,11 @@
 package forms.users.client;
 
-import forms.repository.MenuRepository;
+import repository.MenuRepository;
 import model.MenuItem;
 import model.Order;
 import model.OrderItem;
 import model.RestaurantMainInfo;
+import repository.OrderRepository;
 import util.JOptionPaneLogger;
 
 import javax.swing.*;
@@ -38,12 +39,15 @@ public class ClientPanel {
 
     private OrderItem selectedOrderItem;
 
+    private OrderRepository orderRepository;
+
 
     public ClientPanel(RestaurantMainInfo restaurantMainInfo) {
         this.restaurantMainInfo = restaurantMainInfo;
         this.menuRepository = new MenuRepository();
         this.menuList = new ArrayList<>();
         order = new Order(restaurantMainInfo.getRestaurantID());
+        orderRepository = new OrderRepository();
         setInitialState();
         addActionListeners();
     }
@@ -51,6 +55,7 @@ public class ClientPanel {
     private void setInitialState() {
         //prevent user from directly editing the table
         orderTable.setDefaultEditor(Object.class, null);
+        resetQuantitySpinner();
         getMenuList();
         populateMenuJList();
         updateCartTable();
@@ -84,9 +89,43 @@ public class ClientPanel {
         });
         deleteButton.addActionListener(e -> {
             deleteSelectedOrderItem();
-            deleteButton.setEnabled(false);
+            clearDeleteArea();
         });
-        clearOrderButton.addActionListener(e -> clearCart());
+        clearOrderButton.addActionListener(e -> clearCartWithDialog());
+        checkoutButton.addActionListener(e -> {
+            if (!checkOut()) {
+                return;
+            }
+            clearCart();
+            clearAddArea();
+            clearNameField();
+            clearDeleteArea();
+            resetQuantitySpinner();
+        });
+    }
+
+    private boolean checkOut() {
+        String customerName = getName();
+        if (customerName.isEmpty()) {
+            JOptionPaneLogger.showErrorDialog("Input error", "Name should not be empty.");
+            return false;
+        }
+        if (customerName.length() > 50) {
+            JOptionPaneLogger.showErrorDialog("Input error", "Name length should not be more than 50.");
+            return false;
+        }
+        if (order.getOrderItemList().isEmpty()) {
+            JOptionPaneLogger.showErrorDialog("Input error", "Order should not be empty.");
+            return false;
+        }
+
+        order.setCustomerName(customerName);
+        //submit to database
+        int orderID = orderRepository.addOrder(order);
+        if (orderID == -1) {
+            return false;
+        }
+        return true;
     }
 
     private void getMenuList() {
@@ -131,7 +170,7 @@ public class ClientPanel {
     }
 
     private void updateCartTable() {
-        if (order.getOrderItemList().size() == 0) {
+        if (order.getOrderItemList().isEmpty()) {
             orderTable.setModel(new DefaultTableModel(new Object[]{"Name", "Quantity"}, 0));
             return;
         }
@@ -147,17 +186,21 @@ public class ClientPanel {
     private void clearAddArea() {
         menuItemJList.clearSelection();
         selectedMenuItem = null;
-        quantitySpinner.setValue(0);
+        resetQuantitySpinner();
         addButton.setEnabled(false);
         setPreviewTextArea();
     }
 
-    private void clearCart() {
+    private void clearCartWithDialog() {
         Object response = JOptionPane.showConfirmDialog(null, "Do you want to clear your order?",
                 "Clear Order", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (response.equals(JOptionPane.NO_OPTION)) {
             return;
         }
+        clearCart();
+    }
+
+    private void clearCart() {
         order.clearOrder();
         updateCartTable();
     }
@@ -192,4 +235,25 @@ public class ClientPanel {
         quantitySpinner.setEnabled(true);
         addButton.setEnabled(true);
     }
+
+    private String getName() {
+        return nameField.getText().trim();
+    }
+
+    private void clearNameField() {
+        nameField.setText("");
+    }
+
+    private void clearDeleteArea() {
+        deleteButton.setEnabled(false);
+    }
+
+    private void resetQuantitySpinner() {
+        quantitySpinner.setValue(1);
+        quantitySpinner.setEnabled(false);
+    }
+
+
+
+
 }

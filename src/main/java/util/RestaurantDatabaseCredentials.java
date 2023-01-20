@@ -1,6 +1,6 @@
-package forms.util;
+package util;
 
-public enum DatabaseCredentials {
+public enum RestaurantDatabaseCredentials {
     URL("jdbc:mysql://localhost/restaurant_app"),
     USERNAME(System.getenv("RESTAURANT_APP_USER")),
     PASSWORD(System.getenv("RESTAURANT_APP_PASSWORD"))
@@ -12,7 +12,7 @@ public enum DatabaseCredentials {
         return value;
     }
 
-    DatabaseCredentials(String s) {
+    RestaurantDatabaseCredentials(String s) {
         value = s;
     }
 }

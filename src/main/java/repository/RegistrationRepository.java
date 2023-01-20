@@ -1,7 +1,6 @@
-package forms.repository;
+package repository;
 
-import forms.util.PasswordHasher;
-import forms.util.DatabaseCredentials;
+import util.PasswordHasher;
 import model.RestaurantMainInfo;
 import util.JOptionPaneLogger;
 
@@ -15,8 +14,7 @@ public class RegistrationRepository {
     public boolean register(String username, String password, String restaurantName, String country,
                                    String region, String city) {
         try {
-            Connection conn = DriverManager.getConnection(DatabaseCredentials.URL.getValue(),
-                    DatabaseCredentials.USERNAME.getValue(), DatabaseCredentials.PASSWORD.getValue());
+            Connection conn = RestaurantDatabaseConnectionProvider.getConnection();
 
 
             PreparedStatement accountsInsertStatement = conn.prepareStatement("INSERT INTO restaurant_accounts " +
@@ -30,7 +28,6 @@ public class RegistrationRepository {
             accountsInsertStatement.setString(6, city);
 
             accountsInsertStatement.executeUpdate();
-
 
             JOptionPaneLogger.showInformationDialog("Success", "Restaurant registered successfully.");
 
@@ -47,8 +44,7 @@ public class RegistrationRepository {
 
         RestaurantMainInfo restaurantMainInfo = new RestaurantMainInfo();
         try {
-            Connection conn = DriverManager.getConnection(DatabaseCredentials.URL.getValue(),
-                    DatabaseCredentials.USERNAME.getValue(), DatabaseCredentials.PASSWORD.getValue());
+            Connection conn = RestaurantDatabaseConnectionProvider.getConnection();
 
             PreparedStatement statement = conn.prepareStatement("SELECT * FROM restaurant_accounts " + "WHERE " +
                     "username = ?;");
