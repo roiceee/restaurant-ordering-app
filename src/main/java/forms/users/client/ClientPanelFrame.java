@@ -9,7 +9,6 @@ public class ClientPanelFrame {
     JFrame frame;
 
 
-
     public ClientPanelFrame(RestaurantMainInfo info) {
         frame = new JFrame(info.getName() + "(Client)");
         this.info = info;

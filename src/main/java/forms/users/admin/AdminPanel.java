@@ -133,8 +133,8 @@ public class AdminPanel {
         menuTable.setModel(new DefaultTableModel(menuDataObject.getRows(), menuDataObject.getColumns()));
         //prevent user from directly editing the table
         menuTable.setDefaultEditor(Object.class, null);
-        setSelectedItem(null);
 
+        setSelectedItem(null);
     }
 
     private void setSelectedItem(MenuItem menuItem) {

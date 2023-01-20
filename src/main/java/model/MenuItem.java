@@ -2,6 +2,8 @@ package model;
 
 import util.CustomStringFormatter;
 
+import java.util.Objects;
+
 public class MenuItem {
     private int id;
 
@@ -91,5 +93,20 @@ public class MenuItem {
         return "[ID: " + id + ", RestaurantID: " + restaurantID +
                 ", Name: " + name + ", Description: " + description +
                 ", Price: " + price + ", Pax: " + pax + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MenuItem menuItem = (MenuItem) o;
+        return getId() == menuItem.getId() && getRestaurantID() == menuItem.getRestaurantID() &&
+                getPrice() == menuItem.getPrice() && getPax() == menuItem.getPax() &&
+                Objects.equals(getName(), menuItem.getName()) && Objects.equals(getDescription(), menuItem.getDescription());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getRestaurantID(), getName(), getDescription(), getPrice(), getPax());
     }
 }
