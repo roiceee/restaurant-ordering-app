@@ -1,10 +1,10 @@
 package forms.users.client;
 
-import repository.MenuRepository;
 import model.MenuItem;
 import model.Order;
 import model.OrderItem;
 import model.RestaurantMainInfo;
+import repository.MenuRepository;
 import repository.OrderRepository;
 import util.JOptionPaneLogger;
 
@@ -12,7 +12,11 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Formatter;
 import java.util.List;
 
 public class ClientPanel {
@@ -27,6 +31,7 @@ public class ClientPanel {
     private JButton clearOrderButton;
     private JButton checkoutButton;
     private JTextField nameField;
+    private JLabel restaurantNameLabel;
 
     private RestaurantMainInfo restaurantMainInfo;
 
@@ -55,6 +60,8 @@ public class ClientPanel {
     private void setInitialState() {
         //prevent user from directly editing the table
         orderTable.setDefaultEditor(Object.class, null);
+        restaurantNameLabel.setText(restaurantMainInfo.getName());
+        updateTime();
         resetQuantitySpinner();
         getMenuList();
         populateMenuJList();
@@ -259,4 +266,16 @@ public class ClientPanel {
         quantitySpinner.setValue(1);
         quantitySpinner.setEnabled(false);
     }
+
+    private void updateTime() {
+
+        new Timer(1000, e -> {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm a");
+            LocalDateTime dateTime = LocalDateTime.now();
+
+            timeLabel.setText(dateTimeFormatter.format(dateTime));
+        }).start();
+
+    }
 }
+
