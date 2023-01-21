@@ -125,6 +125,7 @@ public class ClientPanel {
         if (orderID == -1) {
             return false;
         }
+        runOrderNumberPanelFrame(orderID);
         return true;
     }
 
@@ -205,6 +206,12 @@ public class ClientPanel {
         updateCartTable();
     }
 
+    private void runOrderNumberPanelFrame(int orderID) {
+        OrderNumberPanelFrame frame = new OrderNumberPanelFrame(restaurantMainInfo.getName(),
+                order.getCustomerName(), orderID);
+        frame.run();
+    }
+
     public JPanel getMainPanel() {
         return mainPanel;
     }
@@ -252,8 +259,4 @@ public class ClientPanel {
         quantitySpinner.setValue(1);
         quantitySpinner.setEnabled(false);
     }
-
-
-
-
 }

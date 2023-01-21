@@ -57,13 +57,11 @@ public class OrderRepository {
                 statement.executeUpdate();
             }
 
-
             ResultSet set = connection.prepareStatement("SELECT LAST_INSERT_ID();").executeQuery();
             int orderNumber = 0;
             if (set.next()) {
                 orderNumber = set.getInt(1);
             }
-            System.out.println(orderNumber);
             return orderNumber;
         } catch (SQLException e) {
             e.printStackTrace();
