@@ -5,7 +5,7 @@ import model.Order;
 import model.OrderItem;
 import model.RestaurantMainInfo;
 import repository.MenuRepository;
-import repository.OrderRepository;
+import repository.PendingOrderRepository;
 import util.JOptionPaneLogger;
 
 import javax.swing.*;
@@ -15,8 +15,6 @@ import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Formatter;
 import java.util.List;
 
 public class ClientPanel {
@@ -44,7 +42,7 @@ public class ClientPanel {
 
     private OrderItem selectedOrderItem;
 
-    private OrderRepository orderRepository;
+    private PendingOrderRepository orderRepository;
 
 
     public ClientPanel(RestaurantMainInfo restaurantMainInfo) {
@@ -52,7 +50,7 @@ public class ClientPanel {
         this.menuRepository = new MenuRepository();
         this.menuList = new ArrayList<>();
         order = new Order(restaurantMainInfo.getRestaurantID());
-        orderRepository = new OrderRepository();
+        orderRepository = new PendingOrderRepository();
         setInitialState();
         addActionListeners();
     }

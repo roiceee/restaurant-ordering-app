@@ -9,14 +9,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class OrderRepository {
+public class PendingOrderRepository {
     public int addOrder(Order order) {
 
         try {
             Connection connection = RestaurantDatabaseConnectionProvider.getConnection();
 
 
-            String query = "INSERT INTO orders (restaurant_id, " +
+            String query = "INSERT INTO pending_orders (restaurant_id, " +
                     "item_id, customer_name, quantity) VALUES (?, ?, ?, ?)";
 
             PreparedStatement insertStatement1 = connection.prepareStatement(query);
@@ -41,7 +41,7 @@ public class OrderRepository {
 
                 sb.append(";");
 
-                String batchQuery = "INSERT INTO orders (order_id, item_id, " +
+                String batchQuery = "INSERT INTO pending_orders (order_id, item_id, " +
                         "restaurant_id, customer_name, quantity) VALUES " + sb;
 
                 PreparedStatement statement = connection.prepareStatement(batchQuery);
