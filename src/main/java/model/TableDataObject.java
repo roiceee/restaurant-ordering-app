@@ -1,10 +1,14 @@
 package model;
 
-public class MenuDataObject {
+public class TableDataObject {
     Object[][] rows;
     Object[] columns;
 
-    public MenuDataObject(Object[][] rows, Object[] columns) {
+    public TableDataObject() {
+        this.rows = new Object[0][0];
+        this.columns = new Object[0];
+    }
+    public TableDataObject(Object[][] rows, Object[] columns) {
         this.rows = rows;
         this.columns = columns;
     }

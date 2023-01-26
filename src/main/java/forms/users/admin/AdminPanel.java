@@ -1,7 +1,7 @@
 package forms.users.admin;
 
 import repository.MenuRepository;
-import model.MenuDataObject;
+import model.TableDataObject;
 import model.MenuItem;
 import model.RestaurantMainInfo;
 import util.CustomStringFormatter;
@@ -128,9 +128,9 @@ public class AdminPanel {
 
     public void refreshMenuTable() {
 
-        MenuDataObject menuDataObject = adminRepository.getMenuDataObject(restaurantMainInfo.getRestaurantID());
+        TableDataObject tableDataObject = adminRepository.getMenuDataObject(restaurantMainInfo.getRestaurantID());
 
-        menuTable.setModel(new DefaultTableModel(menuDataObject.getRows(), menuDataObject.getColumns()));
+        menuTable.setModel(new DefaultTableModel(tableDataObject.getRows(), tableDataObject.getColumns()));
         //prevent user from directly editing the table
         menuTable.setDefaultEditor(Object.class, null);
 

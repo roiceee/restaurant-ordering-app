@@ -5,7 +5,8 @@ import model.Order;
 import model.OrderItem;
 import model.RestaurantMainInfo;
 import repository.MenuRepository;
-import repository.PendingOrderRepository;
+import repository.OrderRepository;
+import util.CurrentTimeProvider;
 import util.JOptionPaneLogger;
 
 import javax.swing.*;
@@ -42,7 +43,7 @@ public class ClientPanel {
 
     private OrderItem selectedOrderItem;
 
-    private PendingOrderRepository orderRepository;
+    private OrderRepository orderRepository;
 
 
     public ClientPanel(RestaurantMainInfo restaurantMainInfo) {
@@ -50,7 +51,7 @@ public class ClientPanel {
         this.menuRepository = new MenuRepository();
         this.menuList = new ArrayList<>();
         order = new Order(restaurantMainInfo.getRestaurantID());
-        orderRepository = new PendingOrderRepository();
+        orderRepository = new OrderRepository();
         setInitialState();
         addActionListeners();
     }
@@ -266,12 +267,8 @@ public class ClientPanel {
     }
 
     private void updateTime() {
-
         new Timer(1000, e -> {
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm a");
-            LocalDateTime dateTime = LocalDateTime.now();
-
-            timeLabel.setText(dateTimeFormatter.format(dateTime));
+            timeLabel.setText(CurrentTimeProvider.getCurrentTime());
         }).start();
 
     }

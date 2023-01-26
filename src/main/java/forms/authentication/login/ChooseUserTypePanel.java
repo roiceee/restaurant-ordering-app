@@ -2,6 +2,7 @@ package forms.authentication.login;
 
 import forms.users.admin.AdminPanelFrame;
 import forms.users.client.ClientPanelFrame;
+import forms.users.staff.StaffPanelFrame;
 import model.RestaurantMainInfo;
 
 import javax.swing.*;
@@ -33,12 +34,13 @@ public class ChooseUserTypePanel {
     public void addActionListeners() {
         btnAdmin.addActionListener(e -> {
             //launch admin frame
-                runAdminFrame();
-                parentFrame.dispose();
-                }
-        );
+            runAdminFrame();
+            parentFrame.dispose();
+        });
         btnStaff.addActionListener(e -> {
             //launch staff frame
+            runStaffFrame();
+            parentFrame.dispose();
         });
         btnClient.addActionListener(e -> {
             //launch client frame
@@ -61,47 +63,13 @@ public class ChooseUserTypePanel {
         frame.run();
     }
 
+    private void runStaffFrame() {
+        StaffPanelFrame frame = new StaffPanelFrame(info);
+        frame.run();
+    }
+
     public JPanel getMainPanel() {
         return mainPanel;
     }
 
-    public JPanel getRestaurantNamePanel() {
-        return restaurantNamePanel;
-    }
-
-    public JLabel getUsertypeLabel() {
-        return usertypeLabel;
-    }
-
-    public JButton getBtnClient() {
-        return btnClient;
-    }
-
-    public JButton getBtnStaff() {
-        return btnStaff;
-    }
-
-    public JPanel getButtonspanel() {
-        return buttonspanel;
-    }
-
-    public JPanel getStaffButtonPanel() {
-        return staffButtonPanel;
-    }
-
-    public JPanel getClientButtonPanel() {
-        return clientButtonPanel;
-    }
-
-    public JPanel getAdminButtonPanel() {
-        return adminButtonPanel;
-    }
-
-    public JButton getBtnAdmin() {
-        return btnAdmin;
-    }
-
-    public JFrame getParentFrame() {
-        return parentFrame;
-    }
 }

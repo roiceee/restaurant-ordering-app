@@ -1,12 +1,14 @@
 package repository;
 
+import util.DatabaseTableDataUtil;
 import util.PasswordHasher;
-import model.MenuDataObject;
+import model.TableDataObject;
 import util.JOptionPaneLogger;
 
 import java.sql.*;
 
 public class MenuRepository {
+
 
     public boolean addMenuItem(int restaurantID, String name, String description, int price, int pax) {
         try {
@@ -94,7 +96,7 @@ public class MenuRepository {
     }
     
 
-    public MenuDataObject getMenuDataObject(int restaurantID) {
+    public TableDataObject getMenuDataObject(int restaurantID) {
         try {
             Connection con = RestaurantDatabaseConnectionProvider.getConnection();
 
@@ -106,58 +108,13 @@ public class MenuRepository {
 
             ResultSet resultSet = statement.executeQuery();
 
-            return new MenuDataObject(getMenuRows(resultSet), getMenuColumns(resultSet));
+            return new TableDataObject(DatabaseTableDataUtil.getTableRows(resultSet),
+                    DatabaseTableDataUtil.getTableColumns(resultSet));
         } catch (SQLException e) {
             showDatabaseError();
             throw new RuntimeException(e);
         }
     }
-
-    private Object[][] getMenuRows(ResultSet resultSet) {
-        try {
-
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int numberOfColumns = metaData.getColumnCount();
-            int numberOfRows = 0;
-            while (resultSet.next()) {
-                numberOfRows++;
-            }
-            resultSet.beforeFirst();
-            Object[][] data = new Object[numberOfRows][numberOfColumns];
-            int row = 0;
-            while (resultSet.next()) {
-                for (int column = 0; column < numberOfColumns; column++) {
-                    data[row][column] = resultSet.getObject(column + 1);
-                }
-                row++;
-            }
-            return data;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showDatabaseError();
-            return new Object[0][0];
-        }
-
-    }
-
-    private String[] getMenuColumns(ResultSet resultSet) {
-        try {
-
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int numberOfColumns = metaData.getColumnCount();
-            String[] objArray = new String[numberOfColumns];
-
-            for (int i = 1; i <= numberOfColumns; i++) {
-                objArray[i - 1] = metaData.getColumnName(i);
-            }
-            return objArray;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showDatabaseError();
-            return new String[0];
-        }
-    }
-
 
     private void showDatabaseError() {
         JOptionPaneLogger.showErrorDialog("Database error", "Error connecting to database.");
