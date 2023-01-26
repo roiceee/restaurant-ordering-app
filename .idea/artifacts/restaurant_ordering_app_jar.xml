@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="restaurant-ordering-app:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/restaurant_ordering_app_jar</output-path>
+    <root id="archive" name="restaurant-ordering-app.jar">
+      <element id="module-output" name="restaurant-ordering-app" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/mysql/mysql-connector-java/8.0.30/mysql-connector-java-8.0.30.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/protobuf/protobuf-java/3.19.4/protobuf-java-3.19.4.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
