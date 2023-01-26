@@ -28,6 +28,7 @@ public class MenuItemFrame {
     public void run() {
         frame.setContentPane(new MenuItemFormPanel(frame, menuItem, adminPanel, action).getMainPanel());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setResizable(false);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

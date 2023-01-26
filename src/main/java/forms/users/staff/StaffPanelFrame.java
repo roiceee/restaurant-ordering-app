@@ -13,7 +13,7 @@ public class StaffPanelFrame {
         this.restaurantMainInfo = restaurantMainInfo;
     }
 
-    public void run () {
+    public void run() {
         frame.setContentPane(new StaffPanel(restaurantMainInfo, frame).getMainPanel());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);

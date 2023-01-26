@@ -16,6 +16,7 @@ public class ChooseUserTypeFrame {
     public void run() {
         frame.setContentPane(new ChooseUserTypePanel(frame, info).getMainPanel());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
