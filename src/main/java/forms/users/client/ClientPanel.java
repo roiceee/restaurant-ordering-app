@@ -6,7 +6,6 @@ import model.OrderItem;
 import model.RestaurantMainInfo;
 import repository.MenuRepository;
 import repository.OrderRepository;
-import util.CurrentTimeProvider;
 import util.JOptionPaneLogger;
 
 import javax.swing.*;
@@ -16,6 +15,8 @@ import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Formatter;
 import java.util.List;
 
 public class ClientPanel {
@@ -267,8 +268,12 @@ public class ClientPanel {
     }
 
     private void updateTime() {
+
         new Timer(1000, e -> {
-            timeLabel.setText(CurrentTimeProvider.getCurrentTime());
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm a");
+            LocalDateTime dateTime = LocalDateTime.now();
+
+            timeLabel.setText(dateTimeFormatter.format(dateTime));
         }).start();
 
     }
