@@ -1,9 +1,11 @@
 package forms.users.admin;
 
+import model.AnalyticsModel;
 import repository.MenuRepository;
 import model.TableDataObject;
 import model.MenuItem;
 import model.RestaurantMainInfo;
+import repository.OrderRepository;
 import util.CustomStringFormatter;
 
 import javax.swing.*;
@@ -15,6 +17,8 @@ public class AdminPanel {
     private final JFrame parentFrame;
     private final RestaurantMainInfo restaurantMainInfo;
     private final MenuRepository adminRepository;
+
+    private final OrderRepository orderRepository;
     MenuItem selectedItem;
     private JPanel mainPanel;
     private JLabel restaurantName;
@@ -48,7 +52,9 @@ public class AdminPanel {
         this.parentFrame = parentFrame;
         this.restaurantMainInfo = info;
         adminRepository = new MenuRepository();
+        orderRepository = new OrderRepository();
         setRestaurantValues();
+        setAnalyticsValue();
         addActionListeners();
         refreshMenuTable();
     }
@@ -82,6 +88,41 @@ public class AdminPanel {
                 setSelectedItem(menuItem);
             }
         });
+        dateSelectorComboBox.addActionListener(e -> {
+           setAnalyticsValue();
+        });
+    }
+
+    private void setAnalyticsValue() {
+        String selectedItem = (String) getDateSelectorComboBoxSelectedItem();
+
+        AnalyticsModel model = switch (selectedItem) {
+            case "Yesterday" -> getAnalyticsDataYesterday();
+            case "Last Week" -> getAnalyticsDataLastWeek();
+            case "Last Month" -> getAnalyticsDataLastMonth();
+            default -> getAnalyticsDataAllTime();
+        };
+        ordersTextArea.setText(String.valueOf(model.getOrders()));
+        grossRevenueTextArea.setText(String.valueOf(model.getGrossRevenue()));
+    }
+
+    private AnalyticsModel getAnalyticsDataYesterday() {
+      return orderRepository.getAnalyticsDataYesterday(restaurantMainInfo.getRestaurantID());
+    }
+
+    private AnalyticsModel getAnalyticsDataLastWeek() {
+        return orderRepository.getAnalyticsDataLastWeek(restaurantMainInfo.getRestaurantID());
+    }
+
+    private AnalyticsModel getAnalyticsDataLastMonth() {
+        return orderRepository.getAnalyticsDataLastMonth(restaurantMainInfo.getRestaurantID());
+    }
+
+    private AnalyticsModel getAnalyticsDataAllTime() {
+        return orderRepository.getAnalyticsDataAllTime(restaurantMainInfo.getRestaurantID());
+    }
+    private Object getDateSelectorComboBoxSelectedItem() {
+        return dateSelectorComboBox.getSelectedItem();
     }
 
     private void addMenuItem() {
@@ -116,6 +157,9 @@ public class AdminPanel {
 
     private void clearMenu() {
         String password = JOptionPane.showInputDialog("Enter password");
+        if (password == null) {
+            return;
+        }
         if (password.isBlank()) {
             return;
         }

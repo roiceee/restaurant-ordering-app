@@ -1,5 +1,6 @@
 package repository;
 
+import model.AnalyticsModel;
 import model.Order;
 import model.OrderItem;
 import model.TableDataObject;
@@ -146,5 +147,68 @@ public class OrderRepository {
             return false;
         }
     }
+
+    public AnalyticsModel getAnalyticsDataYesterday(int restaurantID) {
+        return getAnalyticsData(restaurantID, 1);
+    }
+
+    public AnalyticsModel getAnalyticsDataLastWeek(int restaurantID) {
+        return getAnalyticsData(restaurantID, 7);
+    }
+
+    public AnalyticsModel getAnalyticsDataLastMonth(int restaurantID) {
+        return getAnalyticsData(restaurantID, 30);
+    }
+
+    public AnalyticsModel getAnalyticsDataAllTime(int restaurantID) {
+        try {
+            Connection connection = RestaurantDatabaseConnectionProvider.getConnection();
+
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT COUNT(*), SUM(i.price) FROM orders o " +
+                            "JOIN items i on o.item_id = i.item_id " +
+                            "WHERE i.restaurant_id = ?;"
+            );
+
+            statement.setInt(1, restaurantID);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return new AnalyticsModel(resultSet.getInt(1), resultSet.getDouble(2));
+            }
+
+            return new AnalyticsModel(0, 0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new AnalyticsModel(0, 0);
+        }
+    }
+    
+    private AnalyticsModel getAnalyticsData(int restaurantID, int numOfDaysSubtracted) {
+        try {
+            Connection connection = RestaurantDatabaseConnectionProvider.getConnection();
+
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT COUNT(*), SUM(i.price) FROM orders o " +
+                            "JOIN items i on o.item_id = i.item_id " +
+                            "WHERE timestamp >= timestamp(SUBDATE(NOW(), INTERVAL ? DAY))" +
+                            "AND i.restaurant_id = ?;"
+            );
+
+            statement.setInt(1, numOfDaysSubtracted);
+            statement.setInt(2, restaurantID);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return new AnalyticsModel(resultSet.getInt(1), resultSet.getDouble(2));
+            }
+
+            return new AnalyticsModel(0, 0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new AnalyticsModel(0, 0);
+        }
+    }
+
 
 }

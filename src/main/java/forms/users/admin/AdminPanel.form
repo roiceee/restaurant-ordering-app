@@ -175,7 +175,7 @@
                         </constraints>
                         <properties>
                           <model>
-                            <item value="Today"/>
+                            <item value="Yesterday"/>
                             <item value="Last Week"/>
                             <item value="Last Month"/>
                             <item value="All Time"/>
