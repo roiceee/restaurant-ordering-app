@@ -39,7 +39,7 @@ public class RegistrationPanel {
     public RegistrationPanel(JFrame parentFrame) {
         addActionListeners();
         this.parentFrame = parentFrame;
-
+        this.repository = new RegistrationRepository();
     }
 
     public void addActionListeners() {

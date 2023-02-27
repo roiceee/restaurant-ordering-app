@@ -15,23 +15,25 @@ import java.sql.SQLException;
 public class OrderRepository {
     public int addOrder(Order order) {
 
+        System.out.println(order.getOrderItemList());
         try {
             Connection connection = RestaurantDatabaseConnectionProvider.getConnection();
 
 
-            String query = "INSERT INTO orders (restaurant_id, " +
-                    "item_id, customer_name, quantity) VALUES (?, ?, ?, ?)";
+            String query = "INSERT INTO orders (item_id, restaurant_id, " +
+                    "customer_name, quantity) VALUES (?, ?, ?, ?)";
 
             PreparedStatement insertStatement1 = connection.prepareStatement(query);
 
             OrderItem orderItem = order.getOrderItemList().remove(0);
-            insertStatement1.setInt(1, order.getRestaurantID());
-            insertStatement1.setInt(2, orderItem.getMenuItem().getId());
+
+            insertStatement1.setInt(1, orderItem.getMenuItem().getId());
+            insertStatement1.setInt(2, order.getRestaurantID());
             insertStatement1.setString(3, order.getCustomerName());
             insertStatement1.setInt(4, orderItem.getQuantity());
             insertStatement1.executeUpdate();
 
-            if (order.getOrderItemList().size() > 1) {
+            if (order.getOrderItemList().size() >= 1) {
                 StringBuilder sb = new StringBuilder();
 
                 for (int i = 0; i < order.getOrderItemList().size(); i++) {

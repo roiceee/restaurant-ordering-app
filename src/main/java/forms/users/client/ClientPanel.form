@@ -98,6 +98,7 @@
                         <constraints/>
                         <properties>
                           <font/>
+                          <minimumSize width="80" height="0"/>
                           <model/>
                         </properties>
                       </component>
