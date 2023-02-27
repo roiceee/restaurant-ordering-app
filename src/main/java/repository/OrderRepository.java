@@ -14,8 +14,6 @@ import java.sql.SQLException;
 
 public class OrderRepository {
     public int addOrder(Order order) {
-
-        System.out.println(order.getOrderItemList());
         try {
             Connection connection = RestaurantDatabaseConnectionProvider.getConnection();
 
