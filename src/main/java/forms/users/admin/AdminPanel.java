@@ -205,6 +205,7 @@ public class AdminPanel {
             deleteItemButton.setEnabled(false);
             return;
         }
+
         editItemButton.setEnabled(true);
         deleteItemButton.setEnabled(true);
     }

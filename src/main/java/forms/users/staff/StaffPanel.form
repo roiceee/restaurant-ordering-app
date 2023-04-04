@@ -90,6 +90,8 @@
                   <component id="9be3a" class="javax.swing.JTable" binding="ordersTable">
                     <constraints/>
                     <properties>
+                      <cellSelectionEnabled value="false"/>
+                      <columnSelectionAllowed value="false"/>
                       <enabled value="false"/>
                     </properties>
                   </component>
